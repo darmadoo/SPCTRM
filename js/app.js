@@ -22,6 +22,10 @@
 		for(i = 0; i < slots.length; i++){
 	    	box[i] = new Slot();
 	  	}
+
+	  	chrome.storage.sync.get('slot', function(result){
+	  		console.log(result);
+	  	});
 	});
 
 	document.getElementById("clearButton").addEventListener('click', function(){
@@ -48,12 +52,19 @@
 		  curSlot.children[0].style.visibility = "hidden";
 		  curSlot.style.backgroundColor = "rgb(22, 149, 138)";
 		  curSlot.style.boxShadow = "0 0 0 black";
+		  chrome.storage.sync.get('slot', function(result){
+
+		  	if(result.length != 0){
+		  		console.log("JSD");
+		  	}
+		  });
+		  chrome.storage.sync.set({'slot' : [index, "rgb(22, 149, 138)"]});
 		}
 		else{
 		  curSlot.children[0].style.visibility = "visible";
 		  curSlot.style.backgroundColor = "white";
 		  curSlot.style.boxShadow = "inset 0px 0px 10px rgba(0, 0, 0, 0.2)";
-		}
+		  chrome.storage.sync.set({'slot' : [index, "white"]});		}
 	}
 
 	// Function to reset the color palette

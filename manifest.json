@@ -8,6 +8,7 @@
 	"description": "Pick any color",
 	"version": "1.0", 
 	"permissions": [
+		"storage",
 		"activeTab",
 		"https://ajax.googleapis.com/"
 	],
