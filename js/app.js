@@ -5,9 +5,9 @@
 	var slots = document.getElementsByClassName("box");
 
 	// Slot object
-	function Slot(){
+	function Slot(picked){
 	  // If color is picked for that slot
-	  this.picked = false;
+	  this.picked = picked;
 	  // Should record the color that is picked
 	  this.colorHex = "THIS SHOULD NOT COME OUT";
 	  // Function to toggle the picked value
@@ -18,13 +18,26 @@
 
 	// on load DOM
 	document.addEventListener('DOMContentLoaded', function () {
-		// Initalize the slots 
-		for(i = 0; i < slots.length; i++){
-	    	box[i] = new Slot();
-	  	}
-
+	  	// chrome.storage.sync.clear();
 	  	chrome.storage.sync.get('slot', function(result){
-	  		console.log(result);
+	  		if(!result.slot){
+	  			chrome.storage.sync.set({'slot': ['white', 'white', 'white', 'white', 'white']});
+	  		}
+	  		else{
+				var arr = result.slot;
+	  			// Initalize the slots 
+				for(i = 0; i < slots.length; i++){
+			    	var color = arr[i];
+			    	if(color != "white"){
+						box[i] = new Slot(true);
+						update(i, slots[i], color);
+					}
+					else{
+						box[i] = new Slot(false);
+						update(i, slots[i], color);
+					}
+			  	}
+	  		}
 	  	});
 	});
 
@@ -40,31 +53,38 @@
 			// Toggle the status of the slot
 			box[index].changePicked();
 			// Update the color
-			update(index, this);
+			update(index, this, "rgb(22, 149, 138)");
 		});
 	}
 
 	// Function to update the color of the slot
 	// takes in the index of the slot and the HTML of the selected slot
-	function update(index, curSlot){
+	function update(index, curSlot, color){
+		console.log(box[index] + " " + index);
 		// curSlot.children[0] is the plus sign
 		if(box[index].picked){
 		  curSlot.children[0].style.visibility = "hidden";
-		  curSlot.style.backgroundColor = "rgb(22, 149, 138)";
+		  curSlot.style.backgroundColor = color;
 		  curSlot.style.boxShadow = "0 0 0 black";
 		  chrome.storage.sync.get('slot', function(result){
-
-		  	if(result.length != 0){
-		  		console.log("JSD");
-		  	}
+		  	// console.log(result.slot[index]);
+		  	var temp = result.slot;
+		  	temp[index] = color;
+			chrome.storage.sync.set({'slot' : temp});
 		  });
-		  chrome.storage.sync.set({'slot' : [index, "rgb(22, 149, 138)"]});
 		}
 		else{
+		  console.log("I AM " + index + " AND I AM IN");
 		  curSlot.children[0].style.visibility = "visible";
 		  curSlot.style.backgroundColor = "white";
 		  curSlot.style.boxShadow = "inset 0px 0px 10px rgba(0, 0, 0, 0.2)";
-		  chrome.storage.sync.set({'slot' : [index, "white"]});		}
+		  chrome.storage.sync.get('slot', function(result){
+		  	// console.log(result.slot[index]);
+		  	var temp = result.slot;
+		  	temp[index] = "white";
+			chrome.storage.sync.set({'slot' : temp});
+		  });	
+		}
 	}
 
 	// Function to reset the color palette
@@ -72,7 +92,7 @@
 	  // Loop through the array of slots and set the pick to false and update
 	  for(var n in box){
 	    box[n].picked = false;
-	    update(n, document.getElementById("slot" + n));
+	    update(n, document.getElementById("slot" + n), "white");
 	  }
 	  
 	}
