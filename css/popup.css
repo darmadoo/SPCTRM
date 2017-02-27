@@ -21,7 +21,7 @@ h1{
   width: 300px;
   height: 54px;
   margin-left: 10px;
-  margin-top: 10px;
+  margin-top: 1px;
 }
 
 .box{
@@ -35,11 +35,16 @@ h1{
 }
 
 .plus{
+  top: 50%;
+  font-size: 30px;
+  line-height: 0;
+  position: relative;
+  color: rgb(117, 117, 117);
 }
 
 #buttonContainer{
   position: fixed;
-  top: 65%;
+  top: 55%;
   width: 100%;
   height: 25%;
   right: 10px;
@@ -56,17 +61,26 @@ h1{
   margin: 3px;
 }
 .buttonText{
-  color: rgb(196, 196, 196);
+  color: white;
   font-weight: 600;
   font-size: 8px;
   letter-spacing: 1px;
+  line-height: 0;
   text-align: center;
   top: 50%;
-  transform: translateY(-50%);
   position: relative;
   user-select: none;
 }
+
 #exportButton{
+  background: linear-gradient(to right, #07b3bc, #0e5f97);
 }
-#clearButton{
-}
+
+/*
+Design Guidelines
+Color Scheme:
+    #07b3bc - Light Blue
+    #0e5f97 - Dark Blue
+    #4e22bf - Violet
+
+*/
