@@ -1,8 +1,8 @@
 body{
 	font-family: 'Open Sans';
 	font-weight: 200;
-	min-width: 300px;
-	min-height: 200px;
+	min-width: 600px;
+	min-height: 180px;
 	background: #f5f5f5;
 	font-size: 16px;
 }
@@ -10,4 +10,50 @@ body{
 h1{
 	font-family: 'Open Sans';
 	font-weight: 500;
+}
+
+#container{
+  position: fixed;
+  width: 500px;
+  height: 100px;
+}
+
+.box{
+	text-align: center;
+  	width: 19%;
+	height: 100%;
+	  background-color: white;
+	  box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.2);
+	  cursor: pointer;
+	display: inline-block;
+}
+
+.plus{
+}
+
+.button{
+  width: 120px;
+  height: 30px;
+  background-color: rgb(125, 125, 125);
+  margin-top: 130px;
+  position: absolute;
+  border-radius: 50px;
+  cursor: pointer;
+}
+.buttonText{
+  color: rgb(196, 196, 196);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-align: center;
+  top: 50%;
+  transform: translateY(-50%);
+  position: relative;
+  user-select: none;
+}
+#exportButton{
+  margin-left: 440px;
+}
+#clearButton{
+  margin-left: 310px;
 }
