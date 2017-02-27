@@ -29,6 +29,8 @@ h1{
 }
 
 .plus{
+	font-size: 50px;
+	vertical-align: middle;
 }
 
 .button{
@@ -46,7 +48,7 @@ h1{
   font-size: 12px;
   letter-spacing: 1px;
   text-align: center;
-  top: 50%;
+  /*top: 50%;*/
   transform: translateY(-50%);
   position: relative;
   user-select: none;
