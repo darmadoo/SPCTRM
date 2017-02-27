@@ -20,17 +20,17 @@ h1{
 
 .box{
 	text-align: center;
-  	width: 19%;
+  width: 19%;
 	height: 100%;
-	  background-color: white;
-	  box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.2);
-	  cursor: pointer;
+	background-color: white;
+	box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.2);
+	cursor: pointer;
 	display: inline-block;
 }
 
 .plus{
-	font-size: 50px;
-	vertical-align: middle;
+  margin-top: 50%;
+  font-size: 50px;
 }
 
 .button{
@@ -48,7 +48,7 @@ h1{
   font-size: 12px;
   letter-spacing: 1px;
   text-align: center;
-  /*top: 50%;*/
+  top: 50%;
   transform: translateY(-50%);
   position: relative;
   user-select: none;
