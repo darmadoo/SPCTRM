@@ -46,7 +46,6 @@
 		for(var n = 0; n < 5; n++){
 				box[n].picked = false;
 				update(n, slots[n], 'white');
-			}
 		}
 		//update local storage
 		chrome.storage.sync.get('slot', function(result){
