@@ -3,6 +3,7 @@
 	var box = [];
 	// Get the array of slots
 	var slots = document.getElementsByClassName("box");
+  var covers = document.getElementsByClassName("cover");
 	var initSlot = ['white', 'white', 'white', 'white', 'white'];
 
 	// Slot object
@@ -36,7 +37,7 @@
 					else{
 						box[i] = new Slot(false);
 					}
-					update(i, slots[i], color);
+					update(i, color);
 			  	}
 	  		}
 	  	});
@@ -45,7 +46,7 @@
 	document.getElementById("clearButton").addEventListener('click', function(){
 		for(var n = 0; n < 5; n++){
 				box[n].picked = false;
-				update(n, slots[n], 'white');
+				update(n, covers[n], 'white');
 		}
 		//update local storage
 		chrome.storage.sync.get('slot', function(result){
@@ -68,25 +69,40 @@
 			else{
 				var color = "white";
 			}
-			update(index, this, color);
+			update(index, color);
+		});
+	}
+
+	// Attach click listener to each covers
+	for(var i = 0; i < covers.length; i++){
+		covers[i].addEventListener('click', function(){
+			var cur = this.id;
+			var index = cur[cur.length-1];
+			// Toggle the status of the slot
+			box[index].changePicked();
+			// Update the color
+			if(box[index].picked){
+				var color = "rgb(22, 149, 138)";
+			}
+			else{
+				var color = "white";
+			}
+			update(index, color);
 		});
 	}
 
 	// Function to update the color of the slot
 	// takes in the index of the slot and the HTML of the selected slot
-	function update(index, curSlot, color){
+	function update(index, color){
+		var curSlot = covers[index];
 		// curSlot.children[0] is the plus sign
 		if(box[index].picked){
-			//hide "+"
-		  curSlot.children[0].style.visibility = "hidden";
-		  // remove inset border
-			curSlot.style.boxShadow = "0 0 0 black";
+		  // shift down
+			curSlot.style.transform = "translateY(-100%)";
 		}
 		else{
-		  //show "+"
-		  curSlot.children[0].style.visibility = "visible";
-			//remove inset border
-		  curSlot.style.boxShadow = "inset 0px 0px 0px 4px rgb(209, 209, 209)";
+			//shift up
+		  curSlot.style.transform = "translateY(-300%)";
 		}
 	  curSlot.style.backgroundColor = color;
 
