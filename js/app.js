@@ -26,17 +26,17 @@
 	  		else{
 				var arr = result.slot;
 	  			// Initalize the slots
-				for(i = 0; i < slots.length; i++){
-			    	var color = arr[i];
-			    	if(color != "white"){
-						box[i] = new Slot(true);
-						update(i, slots[i], color);
-					}
-					else{
-						box[i] = new Slot(false);
-						update(i, slots[i], color);
-					}
-			  	}
+  				for(i = 0; i < slots.length; i++){
+  			    var color = arr[i];
+  			    if(color != "white"){
+    				  box[i] = new Slot(true);
+    					update(i, slots[i], color);
+  					}
+  					else{
+  						box[i] = new Slot(false);
+  						update(i, slots[i], color);
+  					}
+  			  }
 	  		}
 	  	});
 	});
