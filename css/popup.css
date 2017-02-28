@@ -16,7 +16,7 @@ h1{
 	font-weight: 500;
 }
 
-#container{
+.container{
   position: fixed;
   width: 300px;
   height: 54px;
@@ -29,7 +29,6 @@ h1{
   width: 18%;
 	height: 100%;
 	background-color: white;
-	/*box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.2);*/
   box-shadow: inset 0px 0px 0px 4px rgb(209, 209, 209);
 	cursor: pointer;
 	display: inline-block;
@@ -39,6 +38,21 @@ h1{
 
 .box:hover{
   box-shadow: inset 0px 0px 0px 6px rgb(209, 209, 209);
+}
+
+.cover-container{
+  padding-top: 5px;
+  position: absolute;
+  z-index: 5;
+}
+.cover{
+  background-color: rgba(148, 135, 19, 0.5);
+  z-index: 5;
+  box-shadow: 0 0 0;
+  width: 18%;
+  height: 100%;
+  display: inline-block;
+  transform: translateY(-300%);
 }
 
 .plus{
@@ -82,6 +96,7 @@ h1{
 #exportButton{
   background: linear-gradient(to right, #07b3bc, #0e5f97);
 }
+
 
 /*
 Design Guidelines
