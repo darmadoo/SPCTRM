@@ -29,9 +29,16 @@ h1{
   width: 18%;
 	height: 100%;
 	background-color: white;
-	box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.2);
+	/*box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.2);*/
+  box-shadow: inset 0px 0px 0px 4px rgb(209, 209, 209);
 	cursor: pointer;
 	display: inline-block;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-in-out;
+}
+
+.box:hover{
+  box-shadow: inset 0px 0px 0px 6px rgb(209, 209, 209);
 }
 
 .plus{
