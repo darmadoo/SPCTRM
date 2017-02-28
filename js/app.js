@@ -3,6 +3,7 @@
 	var box = [];
 	// Get the array of slots
 	var slots = document.getElementsByClassName("box");
+	var initSlot = ['white', 'white', 'white', 'white', 'white'];
 
 	// Slot object
 	function Slot(picked){
@@ -22,7 +23,7 @@
 	  	chrome.storage.sync.get('slot', function(result){
 	  		console.log(result);
 	  		if(!result.slot){
-	  			chrome.storage.sync.set({'slot': ['white', 'white', 'white', 'white', 'white']});
+	  			chrome.storage.sync.set({'slot' : initSlot});
 	  		}
 	  		else{
 				var arr = result.slot;
@@ -43,13 +44,15 @@
 
 	document.getElementById("clearButton").addEventListener('click', function(){
 		for(var n = 0; n < 5; n++){
-		    if(box[n].picked){
-				// Toggle the status of the slot
-				box[n].changePicked();
-				var color = "white";
-				update(n, slots[n], color);
+				box[n].picked = false;
+				update(n, slots[n], 'white');
 			}
 		}
+		//update local storage
+		chrome.storage.sync.get('slot', function(result){
+		  chrome.storage.sync.set({'slot' : initSlot}, function(){});
+	  });
+		//
 	});
 
 	// Attach click listener to each slot
@@ -75,20 +78,26 @@
 	function update(index, curSlot, color){
 		// curSlot.children[0] is the plus sign
 		if(box[index].picked){
+			//hide "+"
 		  curSlot.children[0].style.visibility = "hidden";
-		  curSlot.style.boxShadow = "0 0 0 black";
+		  // remove inset border
+			curSlot.style.boxShadow = "0 0 0 black";
 		}
 		else{
-		  // console.log("I AM " + index + " AND I AM IN");
+		  //show "+"
 		  curSlot.children[0].style.visibility = "visible";
+			//remove inset border
 		  curSlot.style.boxShadow = "inset 0px 0px 0px 4px rgb(209, 209, 209)";
 		}
+	  curSlot.style.backgroundColor = color;
 
-	    curSlot.style.backgroundColor = color;
-	    chrome.storage.sync.get('slot', function(result){
-		  	var temper = result.slot;
-		  	temper[index] = color;
-			chrome.storage.sync.set({'slot' : temper});
-	  	});
+
+		//local storage update
+	  chrome.storage.sync.get('slot', function(result){
+		  var temper = result.slot;
+		  temper[index] = color;
+		  chrome.storage.sync.set({'slot' : temper}, function(){
+			});
+	  });
 	}
 }());
