@@ -99,10 +99,12 @@
 		if(box[index].picked){
 		  // shift down
 			curSlot.style.transform = "translateY(-100%)";
+      curSlot.style.opacity = "1";
 		}
 		else{
 			//shift up
 		  curSlot.style.transform = "translateY(-300%)";
+      curSlot.style.opacity = "0";
 		}
 	  curSlot.style.backgroundColor = color;
 
