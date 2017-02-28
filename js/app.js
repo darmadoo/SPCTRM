@@ -1,7 +1,7 @@
 (function(){
 	'use strict';
 	var box = [];
-	// Get the array of slots 
+	// Get the array of slots
 	var slots = document.getElementsByClassName("box");
 
 	// Slot object
@@ -25,7 +25,7 @@
 	  		}
 	  		else{
 				var arr = result.slot;
-	  			// Initalize the slots 
+	  			// Initalize the slots
 				for(i = 0; i < slots.length; i++){
 			    	var color = arr[i];
 			    	if(color != "white"){
@@ -77,13 +77,13 @@
 		  console.log("I AM " + index + " AND I AM IN");
 		  curSlot.children[0].style.visibility = "visible";
 		  curSlot.style.backgroundColor = "white";
-		  curSlot.style.boxShadow = "inset 0px 0px 10px rgba(0, 0, 0, 0.2)";
+		  curSlot.style.boxShadow = "inset 0px 0px 0px 4px rgb(209, 209, 209)";
 		  chrome.storage.sync.get('slot', function(result){
 		  	// console.log(result.slot[index]);
 		  	var temp = result.slot;
 		  	temp[index] = "white";
 			chrome.storage.sync.set({'slot' : temp});
-		  });	
+		  });
 		}
 	}
 
@@ -94,9 +94,6 @@
 	    box[n].picked = false;
 	    update(n, document.getElementById("slot" + n), "white");
 	  }
-	  
+
 	}
-
-	
-
 }());
