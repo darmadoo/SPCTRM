@@ -3,7 +3,7 @@
 	var box = [];
 	// Get the array of slots
 	var slots = document.getElementsByClassName("box");
-  var covers = document.getElementsByClassName("cover");
+  	var covers = document.getElementsByClassName("cover");
 	var initSlot = ['white', 'white', 'white', 'white', 'white'];
 
 	// Slot object
@@ -60,6 +60,7 @@
 		slots[i].addEventListener('click', function(){
 			var cur = this.id;
 			var index = cur[cur.length-1];
+			getColor();
 			// Toggle the status of the slot
 			box[index].changePicked();
 			// Update the color
@@ -73,7 +74,23 @@
 		});
 	}
 
-	// Attach click listener to each covers
+	function getColor(){
+		var canvas = document.createElement("canvas");
+		var context = canvas.getContext('2d');
+		// Get the current browser height and width 
+		chrome.tabs.query({
+		    active: true,
+		    lastFocusedWindow: true
+		}, function(tabs) {
+		    console.log(tabs);
+		    canvas.height = tabs.height;
+		    canvas.width = tabs.width;
+		    context.fillStyle = "blue";
+		    context.fillRect(0,0,canvas.height, canvas.width);
+		});
+	}
+
+	// Attach click listener to each cover
 	for(var i = 0; i < covers.length; i++){
 		covers[i].addEventListener('click', function(){
 			var cur = this.id;
@@ -104,15 +121,15 @@
 			//shift up
 		  curSlot.style.transform = "translateY(-300%)";
 		}
-	  curSlot.style.backgroundColor = color;
+	  	curSlot.style.backgroundColor = color;
 
 
 		//local storage update
-	  chrome.storage.sync.get('slot', function(result){
+	    chrome.storage.sync.get('slot', function(result){
 		  var temper = result.slot;
 		  temper[index] = color;
 		  chrome.storage.sync.set({'slot' : temper}, function(){
 			});
-	  });
-	}
+	    });
+	}	
 }());
