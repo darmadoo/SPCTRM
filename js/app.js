@@ -77,7 +77,7 @@
 	function getColor(){
 		var canvas = document.createElement("canvas");
 		var context = canvas.getContext('2d');
-		// Get the current browser height and width 
+		// Get the current browser height and width
 		chrome.tabs.query({
 		    active: true,
 		    lastFocusedWindow: true
@@ -115,13 +115,20 @@
 		// curSlot.children[0] is the plus sign
 		if(box[index].picked){
 		  // shift down
-			curSlot.style.transform = "translateY(-100%)";
-      curSlot.style.opacity = "1";
+
+			// curSlot.style.transform = "translateY(-100%)";
+      // curSlot.style.opacity = "1";
+			posChange(true,curSlot); /////////!!! STILL IN PROGRESS !!!
+			opacityChange(true,curSlot); /////////!!! STILL IN PROGRESS !!!
 		}
 		else{
 			//shift up
-		  curSlot.style.transform = "translateY(-300%)";
-      curSlot.style.opacity = "0";
+
+			// curSlot.style.opacity = "0";
+		  // curSlot.style.transform = "translateY(-300%)";
+			opacityChange(false,curSlot); /////////!!! STILL IN PROGRESS !!!
+			posChange(false,curSlot); /////////!!! STILL IN PROGRESS !!!
+
 		}
 	  	curSlot.style.backgroundColor = color;
 
@@ -133,5 +140,20 @@
 		  chrome.storage.sync.set({'slot' : temper}, function(){
 			});
 	    });
-	}	
+	}
+
+	function opacityChange(on, curSlot){ /////////!!! STILL IN PROGRESS !!!
+		var val = "0";
+		if(on){val = "1";}
+		curSlot.style.opacity = val;
+	}
+	function posChange(on, curSlot){ /////////!!! STILL IN PROGRESS !!!
+		var val = "translateY(-300%)";
+		if(on){val = "translateY(-100%)";}
+		curSlot.style.transform = val;
+	}
+
+
+
+
 }());
