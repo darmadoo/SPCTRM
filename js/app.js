@@ -5,7 +5,6 @@
 	var slots = document.getElementsByClassName("box");
   	var covers = document.getElementsByClassName("cover");
 	var initSlot = ['white', 'white', 'white', 'white', 'white'];
-	var curTab = [0, 0];
 
 	// Slot object
 	function Slot(picked){
@@ -61,31 +60,22 @@
 		slots[i].addEventListener('click', function(){
 			var cur = this.id;
 			var index = cur[cur.length-1];
-			getColor(this);
+			getColor(this, index);
 			// Toggle the status of the slot
-			box[index].changePicked();
-			// Update the color
-			if(box[index].picked){
-				var color = "rgb(22, 149, 138)";
-			}
-			else{
-				var color = "white";
-			}
-			update(index, color);
+			box[index].changePicked();	
 		});
 	}
 
-	function getColor(cur){
+	function getColor(cur, index){
 		chrome.tabs.getSelected(null, function(ret){
 			console.log(ret);
-			initElements(ret, cur);
+			initElements(ret, cur, index);
 		});
 	}
 
-	function initElements(tab, curSlot){
+	function initElements(tab, curSlot, index){
 		var canPick = true;
 
-		
 		if(tab.url.indexOf('chrome') == 0){
 			canPick = true;
 		}
@@ -101,16 +91,7 @@
 					format: 'png'
 				},
 				function(res){
-					chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
-					   curTab[0] = tabId;
-					   curTab[1] = selectInfo.windowId;
-					});
-
-					chrome.storage.sync.get('curTab', function(result){
-						chrome.storage.sync.set({'curTab' : curTab});
-				  	});
-
-					var myWindow = window.open("", "myWindow", "width=1000, height=750");
+					var myWindow = window.open("", "_self", "width=1000, height=750");
 					var c;
 					myWindow.document.write("<div class='container' style:'width:100vw; height:100vh;'>" +
 								"<div id ='boxColor'"+
@@ -139,9 +120,10 @@
 		   				var color = myWindow.document.getElementById("boxColor");
 
 					    var images = new Image();
+					    var changedColor;
 
 					    images.onload = function() {
-					        cnvs.width = images.width;
+					        cnvs.width = images.width; 
 					        cnvs.height = images.height; // resize to fit image
 					        c.drawImage(images, 0, 0 );
 					    }
@@ -157,28 +139,30 @@
 					            y += o.offsetTop;
 					        } while (o = o.offsetParent);
 
-					        x = e.pageX - x; // 36 = border width
-					        y = e.pageY - y; // 36 = border width
+					        x = e.pageX - x; 
+					        y = e.pageY - y; 
 					        var imagesdata = c.getImageData( x, y, 1, 1 );
 					        var new_color = [ imagesdata.data[0], imagesdata.data[1], imagesdata.data[2] ];
 					        color.style.backgroundColor = "rgb("+new_color+")";
+					        changedColor = new_color;
 					    }
-	
+						
 					    cnvs.onmouseover = function(e) {
+					    	e.preventDefault();
 					        cnvs.onmousemove = pixel; // fire pixel() while user is dragging
-					        cnvs.onclick = pixel; // only so it will still fire if user doesn't drag at all
-					        // myWindow.close();
 					    }
-					    cnvs.onclick = function(){
-					    	console.log("SA");
-					    	myWindow.close();
-					    	// need to store the color inside chrome storage then update the slot color 
-					    	// refocus the tab we last opened (http://blog.nerdstogeeks.com/2011/10/switch-focus-between-tabs-in-chrome.html)
-					    	// open the popup.html (http://stackoverflow.com/questions/17928979/how-to-programmatically-open-chrome-extension-popup-html)
-					    	// fill the slot (animated)
 
+					    cnvs.onclick = function(e){
+					    	e.preventDefault();			
+					    
+					    	chrome.storage.sync.get('slot', function(result){
+							  var temper = result.slot;
+							  temper[index] = "rgb("+changedColor+")"
+							  chrome.storage.sync.set({'slot' : temper});
+						    });	
+
+					    	window.open("popup.html", "_self");
 					    }
-					    myWindow.console.log('STILL OK DOKIE');
 					}
 				});
 		}
