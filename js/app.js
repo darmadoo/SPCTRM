@@ -85,15 +85,7 @@
 	function initElements(tab, curSlot){
 		var canPick = true;
 
-		chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
-		   curTab[0] = tabId;
-		   curTab[1] = selectInfo.windowId;
-		});
-
-		chrome.storage.sync.get('curTab', function(result){
-			chrome.storage.sync.set({'curTab' : curTab});
-	  	});
-
+		
 		if(tab.url.indexOf('chrome') == 0){
 			canPick = true;
 		}
@@ -107,16 +99,37 @@
 		if(canPick){
 			chrome.tabs.captureVisibleTab(null, {
 					format: 'png'
-				}, 
+				},
 				function(res){
+					chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
+					   curTab[0] = tabId;
+					   curTab[1] = selectInfo.windowId;
+					});
+
+					chrome.storage.sync.get('curTab', function(result){
+						chrome.storage.sync.set({'curTab' : curTab});
+				  	});
+
 					var myWindow = window.open("", "myWindow", "width=1000, height=750");
-					myWindow.document.write("<canvas style='margin-left:auto; margin-right:auto;' id='c'></canvas>");
 					var c;
-					myWindow.document.write("<div id = 'boxColor' style='width: 300;" + 
-											"height: 100;" +
-											"border: solid 1px black;'></div>");
-					myWindow.document.write("<span id='colorCode'>rgb(0,0,0)</span>");
-					myWindow.document.write("<span id='loc'>0</span>");
+					myWindow.document.write("<div class='container' style:'width:100vw; height:100vh;'>" +
+								"<div id ='boxColor'"+
+										"style='"+
+										"width: 80;" +
+										"height: 80;" +
+										"position: fixed;" +
+										"box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.3), 0 0 5px rgba(0, 0, 0, 0.49);"+
+										"right: 2vw;"+
+										"bottom: 2vh;"+
+							"'></div>"+
+
+							"<canvas style="+
+									"'border: solid 1px black;"+
+									" margin-left:auto;"+
+									" margin-right:auto;'"+
+							" id='c'></canvas>" +
+					"</div>"
+					);
 
 					var cnvs = myWindow.document.getElementById("c");
 
@@ -124,8 +137,6 @@
 					// DRAW FUN STUFF!
 		  			 	c = cnvs.getContext('2d');
 		   				var color = myWindow.document.getElementById("boxColor");
-					    var colorcode = myWindow.document.getElementById("colorCode");
-					    var loc = myWindow.document.getElementById("loc");
 
 					    var images = new Image();
 
@@ -136,10 +147,7 @@
 					    }
 					    images.src = res;
 
-					    myWindow.console.log('STILL OK');
-
 					    var pixel = function(e) {
-					    	myWindow.console.log("CUHAJK");
 					        // find the element's position
 					        var x = 0;
 					        var y = 0;
@@ -154,30 +162,28 @@
 					        var imagesdata = c.getImageData( x, y, 1, 1 );
 					        var new_color = [ imagesdata.data[0], imagesdata.data[1], imagesdata.data[2] ];
 					        color.style.backgroundColor = "rgb("+new_color+")";
-					        colorcode.innerHTML = "rgb("+new_color+")";
-					        loc.innerHTML = "x is " + x + " AND Y IS " + y + " e.pageX: " + e.pageX + " e.pageY: " + e.pageY ;
 					    }
-						myWindow.console.log('STILL OK OKS');
-					    // cnvs.addEventListener('mousedown', function(e){
-					    // 	myWindow.console.log("SDHJSA");
-					    //     cnvs.onmousemove = pixel; // fire pixel() while user is dragging
-					    //     cnvs.onclick = pixel; // only so it will still fire if user doesn't drag at all
-					    // });
+	
 					    cnvs.onmouseover = function(e) {
 					        cnvs.onmousemove = pixel; // fire pixel() while user is dragging
 					        cnvs.onclick = pixel; // only so it will still fire if user doesn't drag at all
 					        // myWindow.close();
 					    }
-					    cnvs.onmouseup = function(){
+					    cnvs.onclick = function(){
 					    	console.log("SA");
 					    	myWindow.close();
+					    	// need to store the color inside chrome storage then update the slot color 
+					    	// refocus the tab we last opened (http://blog.nerdstogeeks.com/2011/10/switch-focus-between-tabs-in-chrome.html)
+					    	// open the popup.html (http://stackoverflow.com/questions/17928979/how-to-programmatically-open-chrome-extension-popup-html)
+					    	// fill the slot (animated)
+
 					    }
 					    myWindow.console.log('STILL OK DOKIE');
 					}
 				});
 		}
 		else{
-			// CANNOT FIND 
+			// CANNOT FIND
 		}
 	}
 	// Attach click listener to each cover
@@ -242,57 +248,5 @@
 		if(on){val = "translateY(-100%)";}
 		curSlot.style.transform = val;
 	}
-
-	// $(function() {
-	// 	var c;
-	// 	var cnvs = document.getElementById("c");
-
-	// 	if( cnvs.getContext) { // Check for canvas support
-	// 	// DRAW FUN STUFF!
-
-	// 	    c = cnvs.getContext('2d');
-	// 	    var color = document.getElementById("color");
-	// 	    var colorcode = document.getElementById("colorcode");
-
-	// 	    var images = new Image();
-
-	// 	    images.onload = function() {
-	// 	        cnvs.width = images.width;cnvs.height = images.height; // resize to fit image
-	// 	        c.drawImage( images, 0, 0 );
-	// 	    }
-	// 	    images.src = "kazoo.png";
-
-	// 	    pixel = function(e) {
-
-	// 	        // find the element's position
-	// 	        var x = 0;
-	// 	        var y = 0;
-	// 	        var o = cnvs;
-	// 	        do {
-	// 	            x += o.offsetLeft;
-	// 	            y += o.offsetTop;
-	// 	        } while (o = o.offsetParent);
-
-	// 	        x = e.pageX - x - 36; // 36 = border width
-	// 	        y = e.pageY - y - 36; // 36 = border width
-	// 	        var imagesdata = c.getImageData( x, y, 1, 1 );
-	// 	        var new_color = [ imagesdata.data[0], imagesdata.data[1], imagesdata.data[2] ];
-	// 	        cnvs.style.borderColor = "rgb("+new_color+")";
-	// 	        colorcode.innerHTML = "rgb("+new_color+")";
-	// 	    }
-
-	// 	    cnvs.onmousedown = function(e) {
-	// 	        cnvs.onmousemove = pixel; // fire pixel() while user is dragging
-	// 	        cnvs.onclick = pixel; // only so it will still fire if user doesn't drag at all
-	// 	    }
-
-	// 	    cnvs.onmouseup = function() {
-	// 	        cnvs.onmousemove = null;
-	// 	    }
-
-	// 	}
-	// });
-
-
 
 }());
