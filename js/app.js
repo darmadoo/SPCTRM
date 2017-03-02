@@ -5,17 +5,7 @@
 	var slots = document.getElementsByClassName("box");
   	var covers = document.getElementsByClassName("cover");
 	var initSlot = ['white', 'white', 'white', 'white', 'white'];
-
-	// ready(init);
-
-	// function ready(fn){
-	// 	if(document.readyState != 'loading'){
-	// 		fn();
-	// 	} 
-	// 	else{
-	// 		document.addEventListener('DOMContentLoaded', fn);
-	// 	}
-	// }
+	var curTab = [0, 0];
 
 	// Slot object
 	function Slot(picked){
@@ -95,6 +85,15 @@
 	function initElements(tab, curSlot){
 		var canPick = true;
 
+		chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
+		   curTab[0] = tabId;
+		   curTab[1] = selectInfo.windowId;
+		});
+
+		chrome.storage.sync.get('curTab', function(result){
+			chrome.storage.sync.set({'curTab' : curTab});
+	  	});
+
 		if(tab.url.indexOf('chrome') == 0){
 			canPick = true;
 		}
@@ -111,7 +110,7 @@
 				}, 
 				function(res){
 					var myWindow = window.open("", "myWindow", "width=1000, height=750");
-					myWindow.document.write("<canvas style='width:95vw; height:80vh; margin-left:auto; margin-right:auto;' id='c'></canvas>");
+					myWindow.document.write("<canvas style='margin-left:auto; margin-right:auto;' id='c'></canvas>");
 					var c;
 					myWindow.document.write("<div id = 'boxColor' style='width: 300;" + 
 											"height: 100;" +
@@ -124,7 +123,6 @@
 					if(cnvs.getContext) { // Check for canvas support
 					// DRAW FUN STUFF!
 		  			 	c = cnvs.getContext('2d');
-		  			 	myWindow.console.log(cnvs);
 		   				var color = myWindow.document.getElementById("boxColor");
 					    var colorcode = myWindow.document.getElementById("colorCode");
 					    var loc = myWindow.document.getElementById("loc");
@@ -134,9 +132,10 @@
 					    images.onload = function() {
 					        cnvs.width = images.width;
 					        cnvs.height = images.height; // resize to fit image
-					        c.drawImage( images, 0, 0 );
+					        c.drawImage(images, 0, 0 );
 					    }
 					    images.src = res;
+
 					    myWindow.console.log('STILL OK');
 
 					    var pixel = function(e) {
@@ -145,13 +144,13 @@
 					        var x = 0;
 					        var y = 0;
 					        var o = cnvs;
-					        // do {
-					        //     x += o.offsetLeft;
-					        //     y += o.offsetTop;
-					        // } while (o = o.offsetParent);
+					        do {
+					            x += o.offsetLeft;
+					            y += o.offsetTop;
+					        } while (o = o.offsetParent);
 
-					        x = e.pageX ; // 36 = border width
-					        y = e.pageY; // 36 = border width
+					        x = e.pageX - x; // 36 = border width
+					        y = e.pageY - y; // 36 = border width
 					        var imagesdata = c.getImageData( x, y, 1, 1 );
 					        var new_color = [ imagesdata.data[0], imagesdata.data[1], imagesdata.data[2] ];
 					        color.style.backgroundColor = "rgb("+new_color+")";
@@ -165,13 +164,13 @@
 					    //     cnvs.onclick = pixel; // only so it will still fire if user doesn't drag at all
 					    // });
 					    cnvs.onmouseover = function(e) {
-					    	myWindow.console.log("SDHJSA");
 					        cnvs.onmousemove = pixel; // fire pixel() while user is dragging
 					        cnvs.onclick = pixel; // only so it will still fire if user doesn't drag at all
+					        // myWindow.close();
 					    }
-
-					    cnvs.onmouseup = function() {
-					        cnvs.onmousemove = null;
+					    cnvs.onmouseup = function(){
+					    	console.log("SA");
+					    	myWindow.close();
 					    }
 					    myWindow.console.log('STILL OK DOKIE');
 					}
