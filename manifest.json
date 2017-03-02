@@ -15,11 +15,6 @@
 	],
 
 	"icons": {"128": "img/icon.png"}, // include 16 * 16, 48 * 48, 128 * 128
-
-	"background":{
-		"page": "background.html",
-		"persistent": true
-	},
 	// "background": {
 	// 	"scripts": [], // js scripts running at the back
 	// 	"persistent": true
