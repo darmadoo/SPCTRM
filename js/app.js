@@ -68,7 +68,6 @@
 
 	function getColor(cur, index){
 		chrome.tabs.getSelected(null, function(ret){
-			console.log(ret);
 			initElements(ret, cur, index);
 		});
 	}
@@ -76,98 +75,93 @@
 	function initElements(tab, curSlot, index){
 		var canPick = true;
 
-		if(tab.url.indexOf('chrome') == 0){
-			canPick = true;
-		}
-		else if(tab.url.indexOf('https://chrome.google.com/webstore')){
-			canPick = true;
-		}
-		else if(tab.url.indexOf('file') == 0){
-			canPick = true;
+		if(tab.url.indexOf('chrome') == 0 || tab.url.indexOf('https://chrome.google.com/webstore') == 0 || tab.url.indexOf('file') == 0){
+			canPick = false;
 		}
 
 		if(canPick){
 			chrome.tabs.captureVisibleTab(null, {
 					format: 'png'
-				},
-				function(res){
-					var myWindow = window.open("", "_self", "width=1000, height=750");
-					var c;
-					myWindow.document.write("<div class='container' style:'width:100vw; height:100vh;'>" +
-								"<div id ='boxColor'"+
-										"style='"+
-										"width: 80;" +
-										"height: 80;" +
-										"position: fixed;" +
-										"box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.3), 0 0 5px rgba(0, 0, 0, 0.49);"+
-										"right: 2vw;"+
-										"bottom: 2vh;"+
-							"'></div>"+
+			},
+			function(res){
+				var myWindow = window.open("", "_self", "width=1000, height=750");
+				var c;
+				myWindow.document.write("<div class='container' style:'width:100vw; height:100vh;'>" +
+							"<div id ='boxColor'"+
+									"style='"+
+									"width: 80;" +
+									"height: 80;" +
+									"position: fixed;" +
+									"box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.3), 0 0 5px rgba(0, 0, 0, 0.49);" +
+									"right: 2vw;" +
+									"bottom: 2vh;" +
+						"'></div>" +
 
-							"<canvas style="+
-									"'border: solid 1px black;"+
-									" margin-left:auto;"+
-									" margin-right:auto;'"+
-							" id='c'></canvas>" +
-					"</div>"
-					);
+						"<canvas style=" +
+								"'border: solid 1px black;" +
+								" margin-left:auto;" +
+								" margin-right:auto;'" +
+						" id='c'></canvas>" +
+				"</div>"
+				);
 
-					var cnvs = myWindow.document.getElementById("c");
+				var cnvs = myWindow.document.getElementById("c");
 
-					if(cnvs.getContext) { // Check for canvas support
-					// DRAW FUN STUFF!
-		  			 	c = cnvs.getContext('2d');
-		   				var color = myWindow.document.getElementById("boxColor");
+				if(cnvs.getContext) { 
+	  			 	c = cnvs.getContext('2d');
+	   				var color = myWindow.document.getElementById("boxColor");
 
-					    var images = new Image();
-					    var changedColor;
+				    var images = new Image();
+				    var changedColor;
 
-					    images.onload = function() {
-					        cnvs.width = images.width; 
-					        cnvs.height = images.height; // resize to fit image
-					        c.drawImage(images, 0, 0 );
-					    }
-					    images.src = res;
+				    images.onload = function() {
+				        cnvs.width = images.width; 
+				        cnvs.height = images.height;
+				        c.drawImage(images, 0, 0 );
+				    }
+				    images.src = res;
 
-					    var pixel = function(e) {
-					        // find the element's position
-					        var x = 0;
-					        var y = 0;
-					        var o = cnvs;
-					        do {
-					            x += o.offsetLeft;
-					            y += o.offsetTop;
-					        } while (o = o.offsetParent);
+				    var pixel = function(e) {
+				        // find the element's position
+				        var x = 0;
+				        var y = 0;
+				        var o = cnvs;
+				        do {
+				            x += o.offsetLeft;
+				            y += o.offsetTop;
+				        } while (o = o.offsetParent);
 
-					        x = e.pageX - x; 
-					        y = e.pageY - y; 
-					        var imagesdata = c.getImageData( x, y, 1, 1 );
-					        var new_color = [ imagesdata.data[0], imagesdata.data[1], imagesdata.data[2] ];
-					        color.style.backgroundColor = "rgb("+new_color+")";
-					        changedColor = new_color;
-					    }
-						
-					    cnvs.onmouseover = function(e) {
-					    	e.preventDefault();
-					        cnvs.onmousemove = pixel; // fire pixel() while user is dragging
-					    }
+				        x = e.pageX - x; 
+				        y = e.pageY - y; 
+				        var imagesdata = c.getImageData( x, y, 1, 1 );
+				        var new_color = [ imagesdata.data[0], imagesdata.data[1], imagesdata.data[2] ];
+				        color.style.backgroundColor = "rgb(" + new_color + ")";
+				        changedColor = new_color;
+				    }
+					
+				    cnvs.onmouseover = function(e) {
+				    	e.preventDefault();
+				        cnvs.onmousemove = pixel;
+				        onmousedown = pixel;
+				    }
 
-					    cnvs.onclick = function(e){
-					    	e.preventDefault();			
-					    
-					    	chrome.storage.sync.get('slot', function(result){
-							  var temper = result.slot;
-							  temper[index] = "rgb("+changedColor+")"
-							  chrome.storage.sync.set({'slot' : temper});
-						    });	
+				    cnvs.onclick = function(e){
+				    	e.preventDefault();			
+				    	
+				    	chrome.storage.sync.get('slot', function(result){
+						  var temper = result.slot;
+						  temper[index] = "rgb(" + changedColor + ")"
+						  chrome.storage.sync.set({'slot' : temper});
+					    });	
 
-					    	window.open("popup.html", "_self");
-					    }
-					}
-				});
+				    	window.open("popup.html", "_self");
+				    }
+				}
+			});
 		}
 		else{
 			// CANNOT FIND
+			console.log(tab.url);
 		}
 	}
 	// Attach click listener to each cover
@@ -194,20 +188,23 @@
 		var curSlot = covers[index];
 		// curSlot.children[0] is the plus sign
 		if(box[index].picked){
-		  // shift down
+		    // shift down
 
 			// curSlot.style.transform = "translateY(-100%)";
-      // curSlot.style.opacity = "1";
-			posChange(true,curSlot); /////////!!! STILL IN PROGRESS !!!
-			opacityChange(true,curSlot); /////////!!! STILL IN PROGRESS !!!
+      		// curSlot.style.opacity = "1";
+			posChange(true, curSlot, function(){
+				opacityChange(true,curSlot); /////////!!! STILL IN PROGRESS !!!
+			}); /////////!!! STILL IN PROGRESS !!!
+			
 		}
 		else{
 			//shift up
-
 			// curSlot.style.opacity = "0";
-		  // curSlot.style.transform = "translateY(-300%)";
-			opacityChange(false,curSlot); /////////!!! STILL IN PROGRESS !!!
-			posChange(false,curSlot); /////////!!! STILL IN PROGRESS !!!
+		    // curSlot.style.transform = "translateY(-300%)";
+			
+			posChange(false, curSlot, function(){
+				opacityChange(false,curSlot); /////////!!! STILL IN PROGRESS !!!
+			}); /////////!!! STILL IN PROGRESS !!!
 
 		}
 	  	curSlot.style.backgroundColor = color;
@@ -227,6 +224,7 @@
 		if(on){val = "1";}
 		curSlot.style.opacity = val;
 	}
+
 	function posChange(on, curSlot){ /////////!!! STILL IN PROGRESS !!!
 		var val = "translateY(-300%)";
 		if(on){val = "translateY(-100%)";}
