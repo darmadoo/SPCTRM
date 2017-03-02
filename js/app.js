@@ -11,7 +11,7 @@
 	// function ready(fn){
 	// 	if(document.readyState != 'loading'){
 	// 		fn();
-	// 	} 
+	// 	}
 	// 	else{
 	// 		document.addEventListener('DOMContentLoaded', fn);
 	// 	}
@@ -108,16 +108,28 @@
 		if(canPick){
 			chrome.tabs.captureVisibleTab(null, {
 					format: 'png'
-				}, 
+				},
 				function(res){
 					var myWindow = window.open("", "myWindow", "width=1000, height=750");
-					myWindow.document.write("<canvas style='width:95vw; height:80vh; margin-left:auto; margin-right:auto;' id='c'></canvas>");
 					var c;
-					myWindow.document.write("<div id = 'boxColor' style='width: 300;" + 
-											"height: 100;" +
-											"border: solid 1px black;'></div>");
-					myWindow.document.write("<span id='colorCode'>rgb(0,0,0)</span>");
-					myWindow.document.write("<span id='loc'>0</span>");
+					myWindow.document.write("<div class='container' style:'width:100vw; height:100vh;'>" +
+								"<div id ='boxColor'"+
+										"style='"+
+										"width: 80;" +
+										"height: 80;" +
+										"position: fixed;" +
+										"box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.3), 0 0 5px rgba(0, 0, 0, 0.49);"+
+										"right: 2vw;"+
+										"bottom: 2vh;"+
+							"'></div>"+
+
+							"<canvas style="+
+									"'border: solid 1px black;"+
+									" margin-left:auto;"+
+									" margin-right:auto;'"+
+							" id='c'></canvas>" +
+					"</div>"
+					);
 
 					var cnvs = myWindow.document.getElementById("c");
 
@@ -126,8 +138,6 @@
 		  			 	c = cnvs.getContext('2d');
 		  			 	myWindow.console.log(cnvs);
 		   				var color = myWindow.document.getElementById("boxColor");
-					    var colorcode = myWindow.document.getElementById("colorCode");
-					    var loc = myWindow.document.getElementById("loc");
 
 					    var images = new Image();
 
@@ -137,35 +147,29 @@
 					        c.drawImage( images, 0, 0 );
 					    }
 					    images.src = res;
-					    myWindow.console.log('STILL OK');
 
 					    var pixel = function(e) {
-					    	myWindow.console.log("CUHAJK");
 					        // find the element's position
 					        var x = 0;
 					        var y = 0;
 					        var o = cnvs;
-					        // do {
-					        //     x += o.offsetLeft;
-					        //     y += o.offsetTop;
-					        // } while (o = o.offsetParent);
+					        do {
+					            x += o.offsetLeft;
+					            y += o.offsetTop;
+					        } while (o = o.offsetParent);
 
-					        x = e.pageX ; // 36 = border width
-					        y = e.pageY; // 36 = border width
+					        x = e.pageX - x; // 36 = border width
+					        y = e.pageY - y; // 36 = border width
 					        var imagesdata = c.getImageData( x, y, 1, 1 );
 					        var new_color = [ imagesdata.data[0], imagesdata.data[1], imagesdata.data[2] ];
 					        color.style.backgroundColor = "rgb("+new_color+")";
-					        colorcode.innerHTML = "rgb("+new_color+")";
-					        loc.innerHTML = "x is " + x + " AND Y IS " + y + " e.pageX: " + e.pageX + " e.pageY: " + e.pageY ;
 					    }
-						myWindow.console.log('STILL OK OKS');
 					    // cnvs.addEventListener('mousedown', function(e){
 					    // 	myWindow.console.log("SDHJSA");
 					    //     cnvs.onmousemove = pixel; // fire pixel() while user is dragging
 					    //     cnvs.onclick = pixel; // only so it will still fire if user doesn't drag at all
 					    // });
 					    cnvs.onmouseover = function(e) {
-					    	myWindow.console.log("SDHJSA");
 					        cnvs.onmousemove = pixel; // fire pixel() while user is dragging
 					        cnvs.onclick = pixel; // only so it will still fire if user doesn't drag at all
 					    }
@@ -178,7 +182,7 @@
 				});
 		}
 		else{
-			// CANNOT FIND 
+			// CANNOT FIND
 		}
 	}
 	// Attach click listener to each cover
