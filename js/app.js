@@ -6,6 +6,17 @@
   	var covers = document.getElementsByClassName("cover");
 	var initSlot = ['white', 'white', 'white', 'white', 'white'];
 
+	// ready(init);
+
+	// function ready(fn){
+	// 	if(document.readyState != 'loading'){
+	// 		fn();
+	// 	} 
+	// 	else{
+	// 		document.addEventListener('DOMContentLoaded', fn);
+	// 	}
+	// }
+
 	// Slot object
 	function Slot(picked){
 	  // If color is picked for that slot
@@ -60,7 +71,7 @@
 		slots[i].addEventListener('click', function(){
 			var cur = this.id;
 			var index = cur[cur.length-1];
-			getColor();
+			getColor(this);
 			// Toggle the status of the slot
 			box[index].changePicked();
 			// Update the color
@@ -74,22 +85,102 @@
 		});
 	}
 
-	function getColor(){
-		var canvas = document.createElement("canvas");
-		var context = canvas.getContext('2d');
-		// Get the current browser height and width
-		chrome.tabs.query({
-		    active: true,
-		    lastFocusedWindow: true
-		}, function(tabs) {
-		    console.log(tabs);
-		    canvas.height = tabs.height;
-		    canvas.width = tabs.width;
-		    context.fillStyle = "blue";
-		    context.fillRect(0,0,canvas.height, canvas.width);
+	function getColor(cur){
+		chrome.tabs.getSelected(null, function(ret){
+			console.log(ret);
+			initElements(ret, cur);
 		});
 	}
 
+	function initElements(tab, curSlot){
+		var canPick = true;
+
+		if(tab.url.indexOf('chrome') == 0){
+			canPick = true;
+		}
+		else if(tab.url.indexOf('https://chrome.google.com/webstore')){
+			canPick = true;
+		}
+		else if(tab.url.indexOf('file') == 0){
+			canPick = true;
+		}
+
+		if(canPick){
+			chrome.tabs.captureVisibleTab(null, {
+					format: 'png'
+				}, 
+				function(res){
+					var myWindow = window.open("", "myWindow", "width=1000, height=750");
+					myWindow.document.write("<canvas style='width:95vw; height:80vh; margin-left:auto; margin-right:auto;' id='c'></canvas>");
+					var c;
+					myWindow.document.write("<div id = 'boxColor' style='width: 300;" + 
+											"height: 100;" +
+											"border: solid 1px black;'></div>");
+					myWindow.document.write("<span id='colorCode'>rgb(0,0,0)</span>");
+					myWindow.document.write("<span id='loc'>0</span>");
+
+					var cnvs = myWindow.document.getElementById("c");
+
+					if(cnvs.getContext) { // Check for canvas support
+					// DRAW FUN STUFF!
+		  			 	c = cnvs.getContext('2d');
+		  			 	myWindow.console.log(cnvs);
+		   				var color = myWindow.document.getElementById("boxColor");
+					    var colorcode = myWindow.document.getElementById("colorCode");
+					    var loc = myWindow.document.getElementById("loc");
+
+					    var images = new Image();
+
+					    images.onload = function() {
+					        cnvs.width = images.width;
+					        cnvs.height = images.height; // resize to fit image
+					        c.drawImage( images, 0, 0 );
+					    }
+					    images.src = res;
+					    myWindow.console.log('STILL OK');
+
+					    var pixel = function(e) {
+					    	myWindow.console.log("CUHAJK");
+					        // find the element's position
+					        var x = 0;
+					        var y = 0;
+					        var o = cnvs;
+					        // do {
+					        //     x += o.offsetLeft;
+					        //     y += o.offsetTop;
+					        // } while (o = o.offsetParent);
+
+					        x = e.pageX ; // 36 = border width
+					        y = e.pageY; // 36 = border width
+					        var imagesdata = c.getImageData( x, y, 1, 1 );
+					        var new_color = [ imagesdata.data[0], imagesdata.data[1], imagesdata.data[2] ];
+					        color.style.backgroundColor = "rgb("+new_color+")";
+					        colorcode.innerHTML = "rgb("+new_color+")";
+					        loc.innerHTML = "x is " + x + " AND Y IS " + y + " e.pageX: " + e.pageX + " e.pageY: " + e.pageY ;
+					    }
+						myWindow.console.log('STILL OK OKS');
+					    // cnvs.addEventListener('mousedown', function(e){
+					    // 	myWindow.console.log("SDHJSA");
+					    //     cnvs.onmousemove = pixel; // fire pixel() while user is dragging
+					    //     cnvs.onclick = pixel; // only so it will still fire if user doesn't drag at all
+					    // });
+					    cnvs.onmouseover = function(e) {
+					    	myWindow.console.log("SDHJSA");
+					        cnvs.onmousemove = pixel; // fire pixel() while user is dragging
+					        cnvs.onclick = pixel; // only so it will still fire if user doesn't drag at all
+					    }
+
+					    cnvs.onmouseup = function() {
+					        cnvs.onmousemove = null;
+					    }
+					    myWindow.console.log('STILL OK DOKIE');
+					}
+				});
+		}
+		else{
+			// CANNOT FIND 
+		}
+	}
 	// Attach click listener to each cover
 	for(var i = 0; i < covers.length; i++){
 		covers[i].addEventListener('click', function(){
@@ -153,6 +244,55 @@
 		curSlot.style.transform = val;
 	}
 
+	// $(function() {
+	// 	var c;
+	// 	var cnvs = document.getElementById("c");
+
+	// 	if( cnvs.getContext) { // Check for canvas support
+	// 	// DRAW FUN STUFF!
+
+	// 	    c = cnvs.getContext('2d');
+	// 	    var color = document.getElementById("color");
+	// 	    var colorcode = document.getElementById("colorcode");
+
+	// 	    var images = new Image();
+
+	// 	    images.onload = function() {
+	// 	        cnvs.width = images.width;cnvs.height = images.height; // resize to fit image
+	// 	        c.drawImage( images, 0, 0 );
+	// 	    }
+	// 	    images.src = "kazoo.png";
+
+	// 	    pixel = function(e) {
+
+	// 	        // find the element's position
+	// 	        var x = 0;
+	// 	        var y = 0;
+	// 	        var o = cnvs;
+	// 	        do {
+	// 	            x += o.offsetLeft;
+	// 	            y += o.offsetTop;
+	// 	        } while (o = o.offsetParent);
+
+	// 	        x = e.pageX - x - 36; // 36 = border width
+	// 	        y = e.pageY - y - 36; // 36 = border width
+	// 	        var imagesdata = c.getImageData( x, y, 1, 1 );
+	// 	        var new_color = [ imagesdata.data[0], imagesdata.data[1], imagesdata.data[2] ];
+	// 	        cnvs.style.borderColor = "rgb("+new_color+")";
+	// 	        colorcode.innerHTML = "rgb("+new_color+")";
+	// 	    }
+
+	// 	    cnvs.onmousedown = function(e) {
+	// 	        cnvs.onmousemove = pixel; // fire pixel() while user is dragging
+	// 	        cnvs.onclick = pixel; // only so it will still fire if user doesn't drag at all
+	// 	    }
+
+	// 	    cnvs.onmouseup = function() {
+	// 	        cnvs.onmousemove = null;
+	// 	    }
+
+	// 	}
+	// });
 
 
 
