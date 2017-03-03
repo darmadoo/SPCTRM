@@ -1,6 +1,5 @@
 (function(){
 	'use strict';
-	
 	var box = [];
 	// Get the array of slots
 	var slots = document.getElementsByClassName("box");
