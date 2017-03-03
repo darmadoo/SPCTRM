@@ -48,11 +48,13 @@ h1{
   transform: translateY(-300%);
   cursor: pointer;
 }
+
 .border{
   box-shadow: inset 0px 0px 0px 4px rgba(0, 0, 0, 0.2);
   transition-duration: 0.2s;
   transition-timing-function: ease-in-out;
 }
+
 .border:hover{
   box-shadow: inset 0px 0px 0px 6px rgba(0, 0, 0, 0.2);
 }
@@ -85,9 +87,11 @@ h1{
   transition-duration: 0.2s;
   transition-timing-function: ease-in-out;
 }
+
 .button:hover{
   transform: scale(1.05, 1.05);
 }
+
 .buttonText{
   color: white;
   font-weight: 600;
@@ -103,7 +107,6 @@ h1{
 #exportButton{
   background: linear-gradient(to right, #07b3bc, #0e5f97);
 }
-
 
 /*
 Design Guidelines

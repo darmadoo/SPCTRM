@@ -1,5 +1,6 @@
 (function(){
 	'use strict';
+	
 	var box = [];
 	// Get the array of slots
 	var slots = document.getElementsByClassName("box");
@@ -10,8 +11,6 @@
 	function Slot(picked){
 	  // If color is picked for that slot
 	  this.picked = picked;
-	  // Should record the color that is picked
-	  this.colorHex = "THIS SHOULD NOT COME OUT";
 	  // Function to toggle the picked value
 	  this.changePicked = function(){
 	  	this.picked = !this.picked;
@@ -52,7 +51,6 @@
 		chrome.storage.sync.get('slot', function(result){
 		  chrome.storage.sync.set({'slot' : initSlot}, function(){});
 	  });
-		//
 	});
 
 	// Attach click listener to each slot
@@ -161,7 +159,8 @@
 		}
 		else{
 			// CANNOT FIND
-			console.log(tab.url);
+			console.log(curSlot);
+			// curSlot.style.boxShadow = "inset 0px 0px 0px 4px #6F0101";
 		}
 	}
 	// Attach click listener to each cover
@@ -188,27 +187,18 @@
 		var curSlot = covers[index];
 		// curSlot.children[0] is the plus sign
 		if(box[index].picked){
-		    // shift down
-
-			// curSlot.style.transform = "translateY(-100%)";
-      		// curSlot.style.opacity = "1";
 			posChange(true, curSlot, function(){
-				opacityChange(true,curSlot); /////////!!! STILL IN PROGRESS !!!
-			}); /////////!!! STILL IN PROGRESS !!!
+				opacityChange(true,curSlot);
+			}); 
 			
 		}
 		else{
-			//shift up
-			// curSlot.style.opacity = "0";
-		    // curSlot.style.transform = "translateY(-300%)";
-			
 			posChange(false, curSlot, function(){
-				opacityChange(false,curSlot); /////////!!! STILL IN PROGRESS !!!
-			}); /////////!!! STILL IN PROGRESS !!!
+				opacityChange(false,curSlot);
+			});
 
 		}
 	  	curSlot.style.backgroundColor = color;
-
 
 		//local storage update
 	    chrome.storage.sync.get('slot', function(result){
@@ -219,13 +209,13 @@
 	    });
 	}
 
-	function opacityChange(on, curSlot){ /////////!!! STILL IN PROGRESS !!!
+	function opacityChange(on, curSlot){ 
 		var val = "0";
 		if(on){val = "1";}
 		curSlot.style.opacity = val;
 	}
 
-	function posChange(on, curSlot){ /////////!!! STILL IN PROGRESS !!!
+	function posChange(on, curSlot){ 
 		var val = "translateY(-300%)";
 		if(on){val = "translateY(-100%)";}
 		curSlot.style.transform = val;
