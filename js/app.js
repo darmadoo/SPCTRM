@@ -1,6 +1,6 @@
 (function(){
 	'use strict';
-	
+
 	var box = [];
 	// Get the array of slots
 	var slots = document.getElementsByClassName("box");
@@ -60,7 +60,7 @@
 			var index = cur[cur.length-1];
 			getColor(this, index);
 			// Toggle the status of the slot
-			box[index].changePicked();	
+			box[index].changePicked();
 		});
 	}
 
@@ -105,7 +105,7 @@
 
 				var cnvs = myWindow.document.getElementById("c");
 
-				if(cnvs.getContext) { 
+				if(cnvs.getContext) {
 	  			 	c = cnvs.getContext('2d');
 	   				var color = myWindow.document.getElementById("boxColor");
 
@@ -113,7 +113,7 @@
 				    var changedColor;
 
 				    images.onload = function() {
-				        cnvs.width = images.width; 
+				        cnvs.width = images.width;
 				        cnvs.height = images.height;
 				        c.drawImage(images, 0, 0 );
 				    }
@@ -129,14 +129,14 @@
 				            y += o.offsetTop;
 				        } while (o = o.offsetParent);
 
-				        x = e.pageX - x; 
-				        y = e.pageY - y; 
+				        x = e.pageX - x;
+				        y = e.pageY - y;
 				        var imagesdata = c.getImageData( x, y, 1, 1 );
 				        var new_color = [ imagesdata.data[0], imagesdata.data[1], imagesdata.data[2] ];
 				        color.style.backgroundColor = "rgb(" + new_color + ")";
 				        changedColor = new_color;
 				    }
-					
+
 				    cnvs.onmouseover = function(e) {
 				    	e.preventDefault();
 				        cnvs.onmousemove = pixel;
@@ -144,13 +144,13 @@
 				    }
 
 				    cnvs.onclick = function(e){
-				    	e.preventDefault();			
-				    	
+				    	e.preventDefault();
+
 				    	chrome.storage.sync.get('slot', function(result){
 						  var temper = result.slot;
 						  temper[index] = "rgb(" + changedColor + ")"
 						  chrome.storage.sync.set({'slot' : temper});
-					    });	
+					    });
 
 				    	window.open("popup.html", "_self");
 				    }
@@ -189,8 +189,8 @@
 		if(box[index].picked){
 			posChange(true, curSlot, function(){
 				opacityChange(true,curSlot);
-			}); 
-			
+			});
+
 		}
 		else{
 			posChange(false, curSlot, function(){
@@ -209,13 +209,13 @@
 	    });
 	}
 
-	function opacityChange(on, curSlot){ 
+	function opacityChange(on, curSlot){
 		var val = "0";
 		if(on){val = "1";}
 		curSlot.style.opacity = val;
 	}
 
-	function posChange(on, curSlot){ 
+	function posChange(on, curSlot){
 		var val = "translateY(-300%)";
 		if(on){val = "translateY(-100%)";}
 		curSlot.style.transform = val;
