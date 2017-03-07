@@ -7,6 +7,7 @@
   	var covers = document.getElementsByClassName("cover");
 	var initSlot = ['white', 'white', 'white', 'white', 'white'];
 	var flag = false;
+	var isVerified = false;
 
 	// Slot object
 	function Slot(picked){
@@ -57,6 +58,17 @@
 		var but = document.getElementById("clearButton");
 
 		closeBar(true, this, two, but);
+		isVerified = false;
+	});
+
+	document.getElementById("exportButton").addEventListener('click', function(){
+		if(!isVerified){
+			console.log("SDAS");
+		}
+		else{
+			// do nothing
+		}
+		
 	});
 
 	document.getElementById("cancelClear").addEventListener('click', function(){
@@ -64,6 +76,7 @@
 		var but = document.getElementById("clearButton");
 
 		closeBar(true, one, this, but);
+		isVerified = false;
 	});
 
 	document.getElementById("clearButton").addEventListener('click', function(){
@@ -71,6 +84,7 @@
 		var one = document.getElementById("clear");
 
 		closeBar(false, one, two, this);
+		isVerified = true;
 	});
 
 	// Attach click listener to each slot
@@ -264,6 +278,7 @@
 			two.classList.add("showLeft");
 			but.classList.add("close");		
 			flag = false;
+
 		}
 		else{
 			var two = document.getElementById("cancelClear");
@@ -297,6 +312,7 @@
 			else{
 				but.style.visibility = "visible";	
 			}
+			document.getElementById("exportButton").disabled = true;
 		}
 	}
 }());

@@ -16,6 +16,17 @@ h1{
 	font-family: 'Open Sans';
 	font-weight: 500;
 }
+
+.overlay{
+    display: none;
+    background-color: rgba(1, 1, 1, 0.7);
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
 .contain{
   display: inline-block;
   width: 20%;
