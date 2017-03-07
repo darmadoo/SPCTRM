@@ -39,6 +39,7 @@ h1{
   background-color: blue;
   margin: 3px;
   text-align: center;
+  cursor: pointer;
 }
 
 .imageShift{
@@ -49,7 +50,7 @@ h1{
 
 .left{
   background-color: rgb(125, 125, 125);
-  
+
 }
 
 .right{
@@ -175,7 +176,7 @@ Color Scheme:
   to{
     visibility: visible;
     transform: translate(-5px);
-  } 
+  }
 }
 
 .showRight{
@@ -190,7 +191,7 @@ Color Scheme:
   to{
     visibility: visible;
     transform: translate(35px);
-  } 
+  }
 }
 
 .close{
