@@ -16,13 +16,45 @@ h1{
 	font-family: 'Open Sans';
 	font-weight: 500;
 }
-
+.contain{
+  display: inline-block;
+  width: 20%;
+  margin: 3px;
+}
 .container{
   position: fixed;
   width: 300px;
   height: 54px;
   margin-left: 10px;
   margin-top: 1px;
+}
+
+.balls{
+  border-radius: 50px;
+  height: 100%;
+  position: absolute;
+  display: block;
+  visibility: hidden;
+  width: 25px;
+  background-color: blue;
+  margin: 3px;
+  text-align: center;
+}
+
+.imageShift{
+    width: 13px;
+    margin-top: 50%;
+    transform: translateY(-50%);
+}
+
+.left{
+  background-color: rgb(125, 125, 125);
+  
+}
+
+.right{
+  background-color: #DD4C4F;
+  transform: translate(31px);
 }
 
 .box{
@@ -78,18 +110,25 @@ h1{
 
 .button{
   width: 20%;
-  height: 80%;
+  height: 100%;
   background-color: rgb(125, 125, 125);
   border-radius: 50px;
   cursor: pointer;
   display: inline-block;
   margin: 3px;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-in-out;
 }
 
 .button:hover{
   transform: scale(1.05, 1.05);
+}
+
+.insideButton{
+  width: 100%;
+  height: 100%;
+  background-color: rgb(125, 125, 125);
+  border-radius: 50px;
+  cursor: pointer;
+  margin: 3px;
 }
 
 .buttonText{
@@ -116,3 +155,63 @@ Color Scheme:
     #4e22bf - Violet
 
 */
+
+.showLeft, .showRight{
+  animation-delay: 0.1s;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(.06,.98,.14,.98);
+}
+
+.showLeft{
+  animation-name: ballToLeft;
+}
+
+@keyframes ballToLeft{
+  from{
+    visibility: hidden;
+    transform: translate(31px);
+  }
+  to{
+    visibility: visible;
+    transform: translate(-5px);
+  } 
+}
+
+.showRight{
+  animation-name: ballToRight;
+}
+
+@keyframes ballToRight{
+  from{
+    visibility: hidden;
+    transform: translate(31px);
+  }
+  to{
+    visibility: visible;
+    transform: translate(35px);
+  } 
+}
+
+.close{
+  animation-name: gone;
+  animation-duration: 0.1s;
+  animation-timing-function: cubic-bezier(.65,.03,1,.61);
+  animation-fill-mode: forwards;
+  animation-direction: normal;
+}
+
+@keyframes gone{
+  from{
+    transform: translate(0);
+    visibility: visible;
+    /*display: block;*/
+    width: 100%;
+  }
+  to{
+    width: 50%;
+    transform: translate(15.5px);
+    visibility: hidden;
+    /*display: none;*/
+  }
+}

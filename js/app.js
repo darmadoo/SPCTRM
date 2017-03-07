@@ -5,6 +5,7 @@
 	var slots = document.getElementsByClassName("box");
   	var covers = document.getElementsByClassName("cover");
 	var initSlot = ['white', 'white', 'white', 'white', 'white'];
+	var flag = false;
 
 	// Slot object
 	function Slot(picked){
@@ -41,7 +42,7 @@
 	  	});
 	});
 
-	document.getElementById("clearButton").addEventListener('click', function(){
+	document.getElementById("clear").addEventListener('click', function(){
 		for(var n = 0; n < 5; n++){
 				box[n].picked = false;
 				update(n, covers[n], 'white');
@@ -49,7 +50,26 @@
 		//update local storage
 		chrome.storage.sync.get('slot', function(result){
 		  chrome.storage.sync.set({'slot' : initSlot}, function(){});
-	  });
+	  	});
+
+		var two = document.getElementById("cancelClear");
+		var but = document.getElementById("clearButton");
+
+		closeBar(true, this, two, but);
+	});
+
+	document.getElementById("cancelClear").addEventListener('click', function(){
+		var one = document.getElementById("clear");
+		var but = document.getElementById("clearButton");
+
+		closeBar(true, one, this, but);
+	});
+
+	document.getElementById("clearButton").addEventListener('click', function(){
+		var two = document.getElementById("cancelClear");
+		var one = document.getElementById("clear");
+
+		closeBar(false, one, two, this);
 	});
 
 	// Attach click listener to each slot
@@ -220,4 +240,62 @@
 		curSlot.style.transform = val;
 	}
 
+	function closeBar(isClose, one, two, but){
+		if(isClose){
+			one.classList.remove("showRight");
+			two.classList.remove("showLeft");
+			but.classList.remove("close");
+
+			void one.offsetWidth;
+			void two.offsetWidth;
+
+			one.style.visibility = "visible";
+			one.style.transform = "translate(35px)";
+			two.style.visibility = "visible";
+			two.style.transform = "translate(-5px)";
+
+			one.style.animationDirection = "reverse";
+			two.style.animationDirection = "reverse";
+			but.style.animationDirection = "reverse";
+			but.style.animationDelay = "0.6s";
+
+			one.classList.add("showRight");
+			two.classList.add("showLeft");
+			but.classList.add("close");		
+			flag = false;
+		}
+		else{
+			var two = document.getElementById("cancelClear");
+			var one = document.getElementById("clear");
+
+			but.classList.remove("close");
+			two.classList.remove("showLeft");
+			one.classList.remove("showRight");
+
+			one.style.visibility = "hidden";
+			one.style.transform = "translate(31px)";
+			two.style.visibility = "hidden";
+			two.style.transform = "translate(31px)";
+
+			void one.offsetWidth;
+			void two.offsetWidth;
+			
+			but.style.animationDirection = "normal";
+			two.style.animationDirection = "normal";
+			one.style.animationDirection = "normal";
+			but.style.animationDelay = "0s";
+
+			but.classList.add("close");
+			two.classList.add("showLeft");
+			one.classList.add("showRight");
+
+			if(!flag){
+				flag = true;
+				but.style.visibility = "hidden";
+			}
+			else{
+				but.style.visibility = "visible";	
+			}
+		}
+	}
 }());
