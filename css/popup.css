@@ -169,7 +169,7 @@ Color Scheme:
 */
 
 .showLeft, .showRight{
-  animation-delay: 0.1s;
+  animation-delay: 0.3s;
   animation-duration: 0.5s;
   animation-fill-mode: forwards;
   animation-timing-function: cubic-bezier(.06,.98,.14,.98);
@@ -207,7 +207,7 @@ Color Scheme:
 
 .close{
   animation-name: gone;
-  animation-duration: 0.1s;
+  animation-duration: 0.3s;
   animation-timing-function: cubic-bezier(.65,.03,1,.61);
   animation-fill-mode: forwards;
   animation-direction: normal;

@@ -245,7 +245,9 @@
 
 	function opacityChange(on, curSlot){
 		var val = "0";
-		if(on){val = "1";}
+		if(on){
+			val = "1";
+		}
 		curSlot.style.opacity = val;
 	}
 
@@ -253,6 +255,7 @@
 		var val = "translateY(-300%)";
 		if(on){val = "translateY(-100%)";}
 		curSlot.style.transform = val;
+
 	}
 
 	function closeBar(isClose, one, two, but){
@@ -272,7 +275,7 @@
 			one.style.animationDirection = "reverse";
 			two.style.animationDirection = "reverse";
 			but.style.animationDirection = "reverse";
-			but.style.animationDelay = "0.6s";
+			but.style.animationDelay = "0.8s";
 
 			one.classList.add("showRight");
 			two.classList.add("showLeft");
@@ -312,7 +315,6 @@
 			else{
 				but.style.visibility = "visible";	
 			}
-			document.getElementById("exportButton").disabled = true;
 		}
 	}
 }());
