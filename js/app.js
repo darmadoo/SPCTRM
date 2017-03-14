@@ -43,6 +43,53 @@
 			  	}
 	  		}
 	  	});
+	  	chrome.storage.sync.get('paletteName', function(result){
+	  		console.log(result);
+	  		if(!result.paletteName){
+	  			chrome.storage.sync.set({'paletteName' : "[Enter Title]"});
+	  		}
+	  		else{
+	  			var title = document.getElementById("title");
+				title.value = result.paletteName;	
+				console.log(result);
+				if(title.value == "[Enter Title]"){
+					title.style.color = "#bababa";
+				}
+				else{
+					title.style.color = "black";
+				}
+	  		}
+	  	});
+	});
+
+	document.getElementById("title").addEventListener('input', function(){
+		if(this.value == "[Enter Title]"){
+			this.style.color = "#bababa";
+		}
+		else{
+			this.style.color = "black";
+		}
+	});
+
+	document.getElementById("title").addEventListener('blur', function(){
+		var that = this;
+		if(that.value.trim() == ""){
+			that.value = "[Enter Title]";
+			that.style.color = "#bababa";
+		}
+		chrome.storage.sync.get('paletteName', function(result){
+		  chrome.storage.sync.set({'paletteName' : that.value});
+	  	});
+	});
+
+	document.getElementById("title").addEventListener('keyup', function(e){
+		if (e.which == 13) {
+			this.blur();
+		}
+	});
+
+	document.getElementById("title").addEventListener('click', function(){
+		this.select();
 	});
 
 	document.getElementById("clear").addEventListener('click', function(){
