@@ -369,18 +369,10 @@
 	}
 
 
-  document.getElementById("exportButton").addEventListener('click', exportFile);
-  function exportFile(){
+  document.getElementById("exportLink").addEventListener('click', exportFile(saveFile), false);
+  function exportFile(callback){
       var background = new Image();
-
-      var exportWindow = window.open("", "_self", "width=1000, height=1000");
-      exportWindow.document.write("<canvas style=" +
-                      "'border: solid 1px black;" +
-                      " margin-left:auto;" +
-                      " margin-right:auto;'" +
-              " id='c'></canvas>"
-      );
-      var cnvs = exportWindow.document.getElementById("c");
+      var cnvs = document.getElementById("c");
 
       if(cnvs.getContext) {
           var c = cnvs.getContext('2d');
@@ -393,21 +385,41 @@
               chrome.storage.sync.get('slot', function(result){
                   var xLoc = 537;
                   var yLoc = 799;
-                  var yTextLoc = 1175;
+                  var yTextLoc = 1200;
+                  var xTitle = 453;
+                  var yTitle = 654;
                   var size = 351;
                   var dist = 394;
 
                   for(var i = 0; i < result.slot.length; i++){
                       c.fillStyle=result.slot[i];
                       c.fillRect(xLoc + i*dist, yLoc, size, size);
-
-                      c.font = "10px Arial";
-                      c.fillText(result.slot[i], xLoc + i*dist, yTextLoc);
+                      if(result.slot[i] != "white"){
+                          c.font = "400 40px Montserrat";
+                          c.fillStyle="white";
+                          c.fillText(result.slot[i], xLoc + i*dist, yTextLoc);
+                      }
                   }
+                  c.fillStyle = "#242424";
+                  c.font = "400 70pt Montserrat";
+                  c.fillText("title", xTitle, yTitle ); //change title
+                  callback(this,cnvs);
       	      });
           }
           background.src = "img/bg.png";
       }
+
+  }
+
+  function saveFile(that,cnvs){
+      console.log("third");
+      var dt = cnvs.toDataURL('image/png');
+      console.log(dt);
+      /* Change MIME type to trick the browser to downlaod the file instead of displaying it */
+      dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+      /* In addition to <a>'s "download" attribute, you can define HTTP-style headers */
+      dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=MyPalette.png');
+      document.getElementById("exportLink").href = dt;
   }
 
   function rgbToHex(r, g, b) {
