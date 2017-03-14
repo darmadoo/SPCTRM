@@ -281,7 +281,6 @@
 			two.classList.add("showLeft");
 			but.classList.add("close");		
 			flag = false;
-
 		}
 		else{
 			var two = document.getElementById("cancelClear");
