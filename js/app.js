@@ -2,6 +2,7 @@
 	'use strict';
 
 	var box = [];
+    var exportColors = [];
 	// Get the array of slots
 	var slots = document.getElementsByClassName("box");
   	var covers = document.getElementsByClassName("cover");
@@ -68,7 +69,7 @@
 		else{
 			// do nothing
 		}
-		
+
 	});
 
 	document.getElementById("cancelClear").addEventListener('click', function(){
@@ -166,9 +167,9 @@
 				        x = e.pageX - x;
 				        y = e.pageY - y;
 				        var imagesdata = c.getImageData( x, y, 1, 1 );
-				        var new_color = [ imagesdata.data[0], imagesdata.data[1], imagesdata.data[2] ];
-				        color.style.backgroundColor = "rgb(" + new_color + ")";
-				        changedColor = new_color;
+                        var new_hex = rgbToHex(imagesdata.data[0], imagesdata.data[1], imagesdata.data[2]);
+                        color.style.backgroundColor = new_hex;
+				        changedColor = new_hex;
 				    }
 
 				    cnvs.onmouseover = function(e) {
@@ -182,8 +183,9 @@
 
 				    	chrome.storage.sync.get('slot', function(result){
 						  var temper = result.slot;
-						  temper[index] = "rgb(" + changedColor + ")"
+						  temper[index] =  changedColor;
 						  chrome.storage.sync.set({'slot' : temper});
+                          console.log(result.slot);
 					    });
 
 				    	window.open("popup.html", "_self");
@@ -279,7 +281,7 @@
 
 			one.classList.add("showRight");
 			two.classList.add("showLeft");
-			but.classList.add("close");		
+			but.classList.add("close");
 			flag = false;
 
 		}
@@ -298,7 +300,7 @@
 
 			void one.offsetWidth;
 			void two.offsetWidth;
-			
+
 			but.style.animationDirection = "normal";
 			two.style.animationDirection = "normal";
 			one.style.animationDirection = "normal";
@@ -313,8 +315,55 @@
 				but.style.visibility = "hidden";
 			}
 			else{
-				but.style.visibility = "visible";	
+				but.style.visibility = "visible";
 			}
 		}
 	}
+
+
+  document.getElementById("exportButton").addEventListener('click', exportFile);
+  function exportFile(){
+      var background = new Image();
+
+      var exportWindow = window.open("", "_self", "width=1000, height=1000");
+      exportWindow.document.write("<canvas style=" +
+                      "'border: solid 1px black;" +
+                      " margin-left:auto;" +
+                      " margin-right:auto;'" +
+              " id='c'></canvas>"
+      );
+      var cnvs = exportWindow.document.getElementById("c");
+
+      if(cnvs.getContext) {
+          var c = cnvs.getContext('2d');
+
+          background.onload = function() {
+              cnvs.width = background.width;
+              cnvs.height = background.height;
+              c.drawImage(background, 0, 0 );
+              //get array of colors
+              chrome.storage.sync.get('slot', function(result){
+                  var xLoc = 537;
+                  var yLoc = 799;
+                  var yTextLoc = 1175;
+                  var size = 351;
+                  var dist = 394;
+
+                  for(var i = 0; i < result.slot.length; i++){
+                      c.fillStyle=result.slot[i];
+                      c.fillRect(xLoc + i*dist, yLoc, size, size);
+
+                      c.font = "10px Arial";
+                      c.fillText(result.slot[i], xLoc + i*dist, yTextLoc);
+                  }
+      	      });
+          }
+          background.src = "img/bg.png";
+      }
+  }
+
+  function rgbToHex(r, g, b) {
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  }
+
 }());
