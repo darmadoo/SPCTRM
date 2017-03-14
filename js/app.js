@@ -9,6 +9,7 @@
 	var initSlot = ['white', 'white', 'white', 'white', 'white'];
 	var flag = false;
 	var isVerified = false;
+	var titleName = "[Enter Title]";
 
 	// Slot object
 	function Slot(picked){
@@ -44,11 +45,11 @@
 	  		}
 	  	});
 	  	chrome.storage.sync.get('paletteName', function(result){
-	  		console.log(result);
 	  		if(!result.paletteName){
 	  			chrome.storage.sync.set({'paletteName' : "[Enter Title]"});
 	  		}
 	  		else{
+	  			titleName = result.paletteName;
 	  			var title = document.getElementById("title");
 				title.value = result.paletteName;	
 				console.log(result);
@@ -77,6 +78,7 @@
 			that.value = "[Enter Title]";
 			that.style.color = "#bababa";
 		}
+		titleName = that.value;
 		chrome.storage.sync.get('paletteName', function(result){
 		  chrome.storage.sync.set({'paletteName' : that.value});
 	  	});
