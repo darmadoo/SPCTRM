@@ -10,6 +10,7 @@
 	var flag = false;
 	var isVerified = false;
 	var titleName = "[Enter Title]";
+    var downloadCanvas = document.getElementById("c");
 
 	// Slot object
 	function Slot(picked){
@@ -23,6 +24,7 @@
 
 	// on load DOM
 	document.addEventListener('DOMContentLoaded', function () {
+        createDownloadFile();
 	  	// chrome.storage.sync.clear();
 	  	chrome.storage.sync.get('slot', function(result){
 	  		if(!result.slot){
@@ -50,7 +52,7 @@
 	  		else{
 	  			titleName = result.paletteName;
 	  			var title = document.getElementById("title");
-				title.value = result.paletteName;	
+				title.value = result.paletteName;
 				if(title.value == "[Enter Title]"){
 					title.style.color = "#bababa";
 				}
@@ -75,9 +77,10 @@
 		if(that.value.trim() == ""){
 			that.value = "[Enter Title]";
 			that.style.color = "#bababa";
-		}	
+		}
 
 		titleName = this.value;
+        createDownloadFile();
 
 		chrome.storage.sync.get('paletteName', function(result){
 		  chrome.storage.sync.set({'paletteName' : that.value});
@@ -92,6 +95,7 @@
 		}
 
 		titleName = this.value;
+        createDownloadFile();
 	});
 
 	document.getElementById("title").addEventListener('click', function(fh){
@@ -294,8 +298,10 @@
 		  var temper = result.slot;
 		  temper[index] = color;
 		  chrome.storage.sync.set({'slot' : temper}, function(){
-			});
+              createDownloadFile();
+          });
 	    });
+
 	}
 
 	function opacityChange(on, curSlot){
@@ -373,19 +379,19 @@
 	}
 
 
-  document.getElementById("exportLink").addEventListener('click', exportFile);
+  document.getElementById("exportLink").addEventListener('click', saveFile);
 
-  function exportFile(callback){
+
+  function createDownloadFile(){
       var background = new Image();
-      var cnvs = document.getElementById("c");
 
-      if(cnvs.getContext) {
-          var c = cnvs.getContext('2d');
+      if(downloadCanvas.getContext) {
+          var c = downloadCanvas.getContext('2d');
           console.log("outside");
           background.onload = function() {
           	console.log("inside");
-              cnvs.width = background.width;
-              cnvs.height = background.height;
+              downloadCanvas.width = background.width;
+              downloadCanvas.height = background.height;
               c.drawImage(background, 0, 0 );
               //get array of colors
               chrome.storage.sync.get('slot', function(result){
@@ -410,7 +416,6 @@
                   c.font = "400 70pt Montserrat";
                   console.log(titleName);
 				  c.fillText(titleName, xTitle, yTitle );
-		  		  saveFile(cnvs);
       	      });
           }
           background.src = "img/bg.png";
@@ -419,8 +424,8 @@
 
   }
 
-  function saveFile(cnvs){
-      var dt = cnvs.toDataURL('image/png');
+  function saveFile(){
+      var dt = downloadCanvas.toDataURL('image/png');
       /* Change MIME type to trick the browser to downlaod the file instead of displaying it */
       dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
       /* In addition to <a>'s "download" attribute, you can define HTTP-style headers */
