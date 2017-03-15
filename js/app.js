@@ -426,7 +426,6 @@
       /* In addition to <a>'s "download" attribute, you can define HTTP-style headers */
       dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=MyPalette.png');
       document.getElementById("exportLink").href = dt;
-      // document.getElementById("exportLink").removeAttribute("download");
   }
 
   function rgbToHex(r, g, b) {
