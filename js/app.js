@@ -25,7 +25,6 @@
 	document.addEventListener('DOMContentLoaded', function () {
 	  	// chrome.storage.sync.clear();
 	  	chrome.storage.sync.get('slot', function(result){
-	  		console.log(result);
 	  		if(!result.slot){
 	  			chrome.storage.sync.set({'slot' : initSlot});
 	  		}
@@ -52,7 +51,6 @@
 	  			titleName = result.paletteName;
 	  			var title = document.getElementById("title");
 				title.value = result.paletteName;	
-				console.log(result);
 				if(title.value == "[Enter Title]"){
 					title.style.color = "#bababa";
 				}
@@ -77,20 +75,26 @@
 		if(that.value.trim() == ""){
 			that.value = "[Enter Title]";
 			that.style.color = "#bababa";
-		}
-		titleName = that.value;
+		}	
+
+		titleName = this.value;
+
 		chrome.storage.sync.get('paletteName', function(result){
 		  chrome.storage.sync.set({'paletteName' : that.value});
 	  	});
+
+	  	console.log(titleName);
 	});
 
 	document.getElementById("title").addEventListener('keyup', function(e){
 		if (e.which == 13) {
 			this.blur();
 		}
+
+		titleName = this.value;
 	});
 
-	document.getElementById("title").addEventListener('click', function(){
+	document.getElementById("title").addEventListener('click', function(fh){
 		this.select();
 	});
 
@@ -113,7 +117,7 @@
 
 	document.getElementById("exportButton").addEventListener('click', function(){
 		if(!isVerified){
-			console.log("SDAS");
+			// console.log("SDAS");
 		}
 		else{
 			// do nothing
@@ -369,15 +373,17 @@
 	}
 
 
-  document.getElementById("exportLink").addEventListener('click', exportFile(saveFile), false);
+  document.getElementById("exportLink").addEventListener('click', exportFile);
+
   function exportFile(callback){
       var background = new Image();
       var cnvs = document.getElementById("c");
 
       if(cnvs.getContext) {
           var c = cnvs.getContext('2d');
-
+          console.log("outside");
           background.onload = function() {
+          	console.log("inside");
               cnvs.width = background.width;
               cnvs.height = background.height;
               c.drawImage(background, 0, 0 );
@@ -402,24 +408,25 @@
                   }
                   c.fillStyle = "#242424";
                   c.font = "400 70pt Montserrat";
-                  c.fillText("title", xTitle, yTitle ); //change title
-                  callback(this,cnvs);
+                  console.log(titleName);
+				  c.fillText(titleName, xTitle, yTitle );
+		  		  saveFile(cnvs);
       	      });
           }
           background.src = "img/bg.png";
       }
 
+
   }
 
-  function saveFile(that,cnvs){
-      console.log("third");
+  function saveFile(cnvs){
       var dt = cnvs.toDataURL('image/png');
-      console.log(dt);
       /* Change MIME type to trick the browser to downlaod the file instead of displaying it */
       dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
       /* In addition to <a>'s "download" attribute, you can define HTTP-style headers */
       dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=MyPalette.png');
       document.getElementById("exportLink").href = dt;
+      // document.getElementById("exportLink").removeAttribute("download");
   }
 
   function rgbToHex(r, g, b) {
