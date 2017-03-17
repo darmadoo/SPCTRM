@@ -218,6 +218,57 @@ Color Scheme:
   }
 }
 
+@keyframes scaleUp{
+  0%{
+    visibility: hidden;
+    transform: translate(31px) scale(400);
+    height: 0px;
+    opacity: 0;
+  }
+  35%{
+    opacity: 1;
+  }
+  100%{
+    visibility: visible;
+    transform: translate(35px) scale(1);
+  }
+}
+
+.poof{
+  animation-duration: 1.8s;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(.06,.98,.14,.98);
+  animation-name: poofy;
+}
+
+@keyframes poofy{
+  0%{
+    opacity: 1;
+  }
+  45%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+}
+
+.phew{
+  animation-duration: 0.3s;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(.06,.98,.14,.98);
+  animation-name: disappear;
+}
+
+@keyframes disappear{
+  from{
+    opacity: 1;
+  }
+  to{
+    opacity: 0;
+  }
+}
+
 .close{
   animation-name: gone;
   animation-duration: 0.3s;

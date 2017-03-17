@@ -280,16 +280,11 @@
 		var curSlot = covers[index];
 		// curSlot.children[0] is the plus sign
 		if(box[index].picked){
-			posChange(true, curSlot, function(){
-				opacityChange(true,curSlot);
-			});
-
+			opacityPosChange(true, curSlot);
 		}
 		else{
-			posChange(false, curSlot, function(){
-				opacityChange(false,curSlot);
-			});
-
+			curSlot.style.transitionDelay = "0.6s";
+			opacityPosChange(false, curSlot);
 		}
 	  	curSlot.style.backgroundColor = color;
 
@@ -304,19 +299,15 @@
 
 	}
 
-	function opacityChange(on, curSlot){
+	function opacityPosChange(on, curSlot){
 		var val = "0";
+		var down = "translateY(-300%)";
 		if(on){
 			val = "1";
+			down = "translateY(-100%)";
 		}
 		curSlot.style.opacity = val;
-	}
-
-	function posChange(on, curSlot){
-		var val = "translateY(-300%)";
-		if(on){val = "translateY(-100%)";}
-		curSlot.style.transform = val;
-
+		curSlot.style.transform = down;
 	}
 
 	function closeBar(isClose, one, two, but){
@@ -328,6 +319,10 @@
 			void one.offsetWidth;
 			void two.offsetWidth;
 
+			document.getElementById("clearImg").classList.add("phew");
+			document.getElementById("exportText").classList.add("poof");
+
+			one.style.animationName = "scaleUp";
 			one.style.visibility = "visible";
 			one.style.transform = "translate(35px)";
 			two.style.visibility = "visible";
@@ -344,13 +339,15 @@
 			flag = false;
 		}
 		else{
-			var two = document.getElementById("cancelClear");
-			var one = document.getElementById("clear");
+			document.getElementById("clearImg").classList.remove("phew");
+			document.getElementById("exportText").classList.remove("poof");
 
 			but.classList.remove("close");
 			two.classList.remove("showLeft");
 			one.classList.remove("showRight");
 
+			one.style.animationName = "ballToRight";
+			one.style.animationDuration = "0.5s";
 			one.style.visibility = "hidden";
 			one.style.transform = "translate(31px)";
 			two.style.visibility = "hidden";
@@ -387,9 +384,7 @@
 
       if(downloadCanvas.getContext) {
           var c = downloadCanvas.getContext('2d');
-          console.log("outside");
           background.onload = function() {
-          	console.log("inside");
               downloadCanvas.width = background.width;
               downloadCanvas.height = background.height;
               c.drawImage(background, 0, 0 );
@@ -414,23 +409,36 @@
                   }
                   c.fillStyle = "#242424";
                   c.font = "400 70pt Montserrat";
-                  console.log(titleName);
 				  c.fillText(titleName, xTitle, yTitle );
       	      });
           }
           background.src = "img/bg.png";
       }
-
-
   }
 
   function saveFile(){
-      var dt = downloadCanvas.toDataURL('image/png');
-      /* Change MIME type to trick the browser to downlaod the file instead of displaying it */
-      dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
-      /* In addition to <a>'s "download" attribute, you can define HTTP-style headers */
-      dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=MyPalette.png');
-      document.getElementById("exportLink").href = dt;
+  	var curTitle = document.getElementById("title");
+  	if(curTitle.value == "[Enter Title]"){
+  		console.log(box);
+  		console.log("error");
+  	}
+  	else{
+  		var dt = downloadCanvas.toDataURL('image/png');
+		/* Change MIME type to trick the browser to downlaod the file instead of displaying it */
+		dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+		/* In addition to <a>'s "download" attribute, you can define HTTP-style headers */
+		dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=MyPalette.png');
+		document.getElementById("exportLink").href = dt;
+
+		titleName = "[Enter Title]";
+		curTitle.value = titleName;
+		curTitle.style.color = "#bababa";
+		createDownloadFile();
+	  	chrome.storage.sync.get('paletteName', function(result){
+			chrome.storage.sync.set({'paletteName' : "[Enter Title]"});
+	  	});
+  	}
+	
   }
 
   function rgbToHex(r, g, b) {
