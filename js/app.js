@@ -8,6 +8,7 @@
   	var covers = document.getElementsByClassName("cover");
 	var initSlot = ['white', 'white', 'white', 'white', 'white'];
 	var flag = false;
+	var isClear = false;
 	var isVerified = false;
 	var titleName = "[Enter Title]";
     var downloadCanvas = document.getElementById("c");
@@ -115,6 +116,7 @@
 		var two = document.getElementById("cancelClear");
 		var but = document.getElementById("clearButton");
 
+		isClear = true;
 		closeBar(true, this, two, but);
 		isVerified = false;
 	});
@@ -133,6 +135,7 @@
 		var one = document.getElementById("clear");
 		var but = document.getElementById("clearButton");
 
+		isClear = false;
 		closeBar(true, one, this, but);
 		isVerified = false;
 	});
@@ -312,6 +315,16 @@
 
 	function closeBar(isClose, one, two, but){
 		if(isClose){
+			if(isClear){
+				one.style.animationName = "scaleUp";
+
+				document.getElementById("clearImg").classList.add("phew");
+				document.getElementById("exportText").classList.add("poof");
+			}
+			else{
+				one.style.animationName = null;
+			}
+
 			one.classList.remove("showRight");
 			two.classList.remove("showLeft");
 			but.classList.remove("close");
@@ -319,14 +332,11 @@
 			void one.offsetWidth;
 			void two.offsetWidth;
 
-			document.getElementById("clearImg").classList.add("phew");
-			document.getElementById("exportText").classList.add("poof");
-
-			one.style.animationName = "scaleUp";
 			one.style.visibility = "visible";
 			one.style.transform = "translate(35px)";
 			two.style.visibility = "visible";
 			two.style.transform = "translate(-5px)";
+			
 
 			one.style.animationDirection = "reverse";
 			two.style.animationDirection = "reverse";
@@ -339,15 +349,16 @@
 			flag = false;
 		}
 		else{
-			document.getElementById("clearImg").classList.remove("phew");
-			document.getElementById("exportText").classList.remove("poof");
+			if(isClear){
+				document.getElementById("clearImg").classList.remove("phew");
+				document.getElementById("exportText").classList.remove("poof");
+				one.style.animationName = "ballToRight";
+			}
 
 			but.classList.remove("close");
 			two.classList.remove("showLeft");
 			one.classList.remove("showRight");
 
-			one.style.animationName = "ballToRight";
-			one.style.animationDuration = "0.5s";
 			one.style.visibility = "hidden";
 			one.style.transform = "translate(31px)";
 			two.style.visibility = "hidden";
@@ -372,6 +383,7 @@
 			else{
 				but.style.visibility = "visible";
 			}
+		
 		}
 	}
 
