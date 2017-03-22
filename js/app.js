@@ -6,12 +6,13 @@
 	// Get the array of slots
 	var slots = document.getElementsByClassName("box");
   	var covers = document.getElementsByClassName("cover");
-	var initSlot = ['white', 'white', 'white', 'white', 'white'];
+	var initSlot = ['spctrm', 'spctrm', 'spctrm', 'spctrm', 'spctrm'];
 	var flag = false;
 	var isClear = false;
 	var isVerified = false;
 	var titleName = "[Enter Title]";
     var downloadCanvas = document.getElementById("c");
+    var clip = new Clipboard('.hexNumWord');
 
 	// Slot object
 	function Slot(picked){
@@ -36,7 +37,7 @@
 	  			// Initalize the slots
 				for(i = 0; i < slots.length; i++){
 			    	var color = arr[i];
-			    	if(color != "white"){
+			    	if(color != "spctrm"){
 						box[i] = new Slot(true);
 					}
 					else{
@@ -64,6 +65,23 @@
 	  	});
 	});
 
+	clip.on("success", function(e){
+	 	var curBox = e.trigger;
+	 	// cur.classList.add("slide");
+		var color = curBox.innerHTML;
+		curBox.classList.add("anim");
+
+		curBox.setAttribute("data-content", "copied!");
+
+		setTimeout(function(){
+			curBox.setAttribute("data-content", color);
+		}, 1500);
+
+		setTimeout(function(){
+			curBox.classList.remove("anim");
+		}, 2500);
+	});
+
 	document.getElementById("title").addEventListener('input', function(){
 		if(this.value == "[Enter Title]"){
 			this.style.color = "#bababa";
@@ -86,8 +104,6 @@
 		chrome.storage.sync.get('paletteName', function(result){
 		  chrome.storage.sync.set({'paletteName' : that.value});
 	  	});
-
-	  	console.log(titleName);
 	});
 
 	document.getElementById("title").addEventListener('keyup', function(e){
@@ -106,7 +122,7 @@
 	document.getElementById("clear").addEventListener('click', function(){
 		for(var n = 0; n < 5; n++){
 				box[n].picked = false;
-				update(n, covers[n], 'white');
+				update(n, "spctrm");
 		}
 		//update local storage
 		chrome.storage.sync.get('slot', function(result){
@@ -245,7 +261,6 @@
 						  var temper = result.slot;
 						  temper[index] =  changedColor;
 						  chrome.storage.sync.set({'slot' : temper});
-                          console.log(result.slot);
 					    });
 
 				    	window.open("popup.html", "_self");
@@ -266,14 +281,7 @@
 			var index = cur[cur.length-1];
 			// Toggle the status of the slot
 			box[index].changePicked();
-			// Update the color
-			if(box[index].picked){
-				var color = "rgb(22, 149, 138)";
-			}
-			else{
-				var color = "white";
-			}
-			update(index, color);
+			update(index, "spctrm");
 		});
 	}
 
@@ -286,10 +294,33 @@
 			opacityPosChange(true, curSlot);
 		}
 		else{
-			curSlot.style.transitionDelay = "0.6s";
-			opacityPosChange(false, curSlot);
+			if(isVerified){
+				curSlot.style.transitionDelay = "0.6s";
+				opacityPosChange(false, curSlot);
+			}
+			else{
+				opacityPosChange(false, curSlot);
+			}
+			
 		}
 	  	curSlot.style.backgroundColor = color;
+
+	  	var curHex = document.getElementById("color"+index);
+	  	curHex.setAttribute("data-clipboard-text" , color);
+	  	if(color != "spctrm"){
+	  		curHex.innerHTML = color;
+	  	}
+	  	else{
+	  		if(isVerified){
+	  			setTimeout(function(){
+		  			curHex.innerHTML = "";
+		  		}, 600);
+	  		}
+	  		else{
+	  			curHex.innerHTML = "";
+	  		}
+	  		
+	  	}
 
 		//local storage update
 	    chrome.storage.sync.get('slot', function(result){
@@ -413,7 +444,7 @@
                   for(var i = 0; i < result.slot.length; i++){
                       c.fillStyle=result.slot[i];
                       c.fillRect(xLoc + i*dist, yLoc, size, size);
-                      if(result.slot[i] != "white"){
+                      if(result.slot[i] != "spctrm"){
                           c.font = "400 40px Montserrat";
                           c.fillStyle="white";
                           c.fillText(result.slot[i], xLoc + i*dist, yTextLoc);
@@ -429,26 +460,42 @@
   }
 
   function saveFile(){
-  	var curTitle = document.getElementById("title");
+  	var dt = downloadCanvas.toDataURL('image/png');
+	/* Change MIME type to trick the browser to downlaod the file instead of displaying it */
+	dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+	/* In addition to <a>'s "download" attribute, you can define HTTP-style headers */
+	dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=MyPalette.png');
+	document.getElementById("exportLink").href = dt;
+
+	var curTitle = document.getElementById("title");
+	titleName = "[Enter Title]";
+
+	curTitle.value = titleName;
+	curTitle.style.color = "#bababa";
+	createDownloadFile();
+  	chrome.storage.sync.get('paletteName', function(result){
+		chrome.storage.sync.set({'paletteName' : "[Enter Title]"});
+  	});
+  	
   	if(curTitle.value == "[Enter Title]"){
   		console.log(box);
   		console.log("error");
   	}
   	else{
-  		var dt = downloadCanvas.toDataURL('image/png');
-		/* Change MIME type to trick the browser to downlaod the file instead of displaying it */
-		dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
-		/* In addition to <a>'s "download" attribute, you can define HTTP-style headers */
-		dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=MyPalette.png');
-		document.getElementById("exportLink").href = dt;
+  // 		var dt = downloadCanvas.toDataURL('image/png');
+		// /* Change MIME type to trick the browser to downlaod the file instead of displaying it */
+		// dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+		// /* In addition to <a>'s "download" attribute, you can define HTTP-style headers */
+		// dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=MyPalette.png');
+		// document.getElementById("exportLink").href = dt;
 
-		titleName = "[Enter Title]";
-		curTitle.value = titleName;
-		curTitle.style.color = "#bababa";
-		createDownloadFile();
-	  	chrome.storage.sync.get('paletteName', function(result){
-			chrome.storage.sync.set({'paletteName' : "[Enter Title]"});
-	  	});
+		// titleName = "[Enter Title]";
+		// curTitle.value = titleName;
+		// curTitle.style.color = "#bababa";
+		// createDownloadFile();
+	 //  	chrome.storage.sync.get('paletteName', function(result){
+		// 	chrome.storage.sync.set({'paletteName' : "[Enter Title]"});
+	 //  	});
   	}
 	
   }

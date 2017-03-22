@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<link href="https://fonts.googleapis.com/css?family=Montserrat:500|Open+Sans" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat:300,500,600|Open+Sans" rel="stylesheet">
 		<link href="css/popup.css" rel="stylesheet" type="text/css">
 	</head>
 
@@ -21,6 +21,15 @@
 	    </div>
 
 	    <div class = "overlay"></div>
+
+	    <div class="hexContainer">
+	    	<div class="hexNum"><span class="hexNumWord" data-clipboard-target="#color0" data-clipboard-text="" data-content="copied!" id="color0"></span></div>
+	    	<div class="hexNum"><span class="hexNumWord" data-clipboard-target="#color1" data-clipboard-text="" data-content="copied!" id="color1"></span></div>
+	    	<div class="hexNum"><span class="hexNumWord" data-clipboard-target="#color2"data-clipboard-text="" data-content="copied!" id="color2"></span></div>
+	    	<div class="hexNum"><span class="hexNumWord" data-clipboard-target="#color3" data-clipboard-text="" data-content="copied!" id="color3"></span></div>
+	    	<div class="hexNum"><span class="hexNumWord" data-clipboard-target="#color4" data-clipboard-text="" data-content="copied!" id="color4"></span></div>
+	    </div>
+
 		<div id="buttonContainer">
 			<div class="contain">
 				<div class="balls right" id="clear"><img id="clearImg" class="imageShift" src="img/clear.png"/></div>
@@ -31,7 +40,10 @@
     			<div class="button" id="exportButton"><h1 id="exportText" class="buttonText">EXPORT</h1></div>
 				</a>
 		</div>
+
 		<canvas style='border: solid 1px black; display: none;' id='c'></canvas>
+
+		<script src="js/clipboard.min.js"></script>
     	<script src="js/app.js"></script>
     </body>
 </html>
