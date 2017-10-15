@@ -3,7 +3,7 @@
 
 	"name": "Spctrm", 
 	"description": "Gather your favorite colors in one place.",
-	"version": "1.11.1", 
+	"version": "1.12", 
 	"short_name": "Spctrm",
 	"permissions": [
 		"storage",

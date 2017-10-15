@@ -13,6 +13,7 @@
 	var titleName = "[Enter Title]";
     var downloadCanvas = document.getElementById("c");
     var clip = new Clipboard('.hexNumWord');
+    var isAnim = false;
 
 	// Slot object
 	function Slot(picked){
@@ -67,19 +68,22 @@
 
 	clip.on("success", function(e){
 	 	var curBox = e.trigger;
-	 	// cur.classList.add("slide");
 		var color = curBox.innerHTML;
-		curBox.classList.add("anim");
+		if(!isAnim){
+			isAnim = true;
+			curBox.classList.add("anim");
 
-		curBox.setAttribute("data-content", "copied!");
+			curBox.setAttribute("data-content", "copied!");
 
-		setTimeout(function(){
-			curBox.setAttribute("data-content", color);
-		}, 1500);
+			setTimeout(function(){
+				curBox.setAttribute("data-content", color);
+			}, 1500);
 
-		setTimeout(function(){
-			curBox.classList.remove("anim");
-		}, 2500);
+			setTimeout(function(){
+				curBox.classList.remove("anim");
+			}, 2500);
+			isAnim = false;
+		}
 	});
 
 	document.getElementById("title").addEventListener('input', function(){
