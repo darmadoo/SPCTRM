@@ -5,6 +5,7 @@
     var exportColors = [];
 	// Get the array of slots
 	var slots = document.getElementsByClassName("box");
+	var hexCodeContainer = document.getElementsByClassName("hexNumWord");
   	var covers = document.getElementsByClassName("cover");
 	var initSlot = ['spctrm', 'spctrm', 'spctrm', 'spctrm', 'spctrm'];
 	var flag = false;
@@ -12,7 +13,7 @@
 	var isVerified = false;
 	var titleName = "[Enter Title]";
     var downloadCanvas = document.getElementById("c");
-    var clip = new Clipboard('.hexNumWord');
+    // var clip = new Clipboard('.hexNumWord');
     var isAnim = false;
 
 	// Slot object
@@ -66,25 +67,34 @@
 	  	});
 	});
 
-	clip.on("success", function(e){
-	 	var curBox = e.trigger;
-		var color = curBox.innerHTML;
-		if(!isAnim){
-			isAnim = true;
-			curBox.classList.add("anim");
+	/* Taken from: https://github.com/zenorocha/clipboard.js */
+	// clip.on("success", function(e){
+	//  	var curBox = e.trigger;
+	// 	var color = curBox.innerHTML;
+	// 	console.info('Action:', e.action);
+	//     console.info('Text:', e.text);
+	//     console.info('Trigger:', e.trigger);
+	// 	if(!isAnim){
+	// 		isAnim = true;
+	// 		curBox.classList.add("anim");
 
-			curBox.setAttribute("data-content", "copied!");
+	// 		curBox.setAttribute("data-content", "copied!");
 
-			setTimeout(function(){
-				curBox.setAttribute("data-content", color);
-			}, 1500);
+	// 		setTimeout(function(){
+	// 			curBox.setAttribute("data-content", color);
+	// 		}, 1500);
 
-			setTimeout(function(){
-				curBox.classList.remove("anim");
-			}, 2500);
-			isAnim = false;
-		}
-	});
+	// 		setTimeout(function(){
+	// 			curBox.classList.remove("anim");
+	// 		}, 2500);
+	// 		isAnim = false;
+	// 	}
+	// });
+
+	// clip.on('error', function(e) {
+	//     console.error('Action:', e.action);
+	//     console.error('Trigger:', e.trigger);
+	// });
 
 	document.getElementById("title").addEventListener('input', function(){
 		if(this.value == "[Enter Title]"){
@@ -176,6 +186,37 @@
 			getColor(this, index);
 			// Toggle the status of the slot
 			box[index].changePicked();
+		});
+	}
+
+	for(var i = 0; i < hexCodeContainer.length; i++){
+		hexCodeContainer[i].addEventListener('click', function(){
+			var input = document.createElement("input");
+			input.type = "text";
+            input.value = this.innerHTML;
+            input.id = "member_" + this.id;
+            this.append(input);
+			var copyText = document.getElementById("member_" + this.id);
+		  	copyText.select();
+		  	document.execCommand("Copy");
+		  	var elem = document.getElementById("member_" + this.id);
+    		elem.parentNode.removeChild(elem);
+    		if(!isAnim){
+				isAnim = true;
+				this.classList.add("anim");
+				var that = this;
+
+				this.setAttribute("data-content", "copied!");
+
+				setTimeout(function(){
+					that.setAttribute("data-content", that.innerHTML);
+				}, 1500);
+
+				setTimeout(function(){
+					that.classList.remove("anim");
+				}, 2500);
+				isAnim = false;
+			}
 		});
 	}
 
@@ -311,6 +352,7 @@
 
 	  	var curHex = document.getElementById("color"+index);
 	  	curHex.setAttribute("data-clipboard-text" , color);
+	  	curHex.setAttribute("value" , color);
 	  	if(color != "spctrm"){
 	  		curHex.innerHTML = color;
 	  	}
